@@ -13,9 +13,22 @@ public class Formation {
     private Date start_date,end_date;
 
 
+    public Formation() {
+    }
 
     public Formation(int id, String image, String title, String description, boolean is_online, boolean available_for_employee, boolean available_for_intern, Date start_date, Date end_date) {
         this.id = id;
+        this.image = image;
+        this.title = title;
+        this.description = description;
+        this.is_online = is_online;
+        this.available_for_employee = available_for_employee;
+        this.available_for_intern = available_for_intern;
+        this.start_date = start_date;
+        this.end_date = end_date;
+    }
+
+    public Formation(String image, String title, String description, boolean is_online, boolean available_for_employee, boolean available_for_intern, Date start_date, Date end_date) {
         this.image = image;
         this.title = title;
         this.description = description;
