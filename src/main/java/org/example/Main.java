@@ -9,4 +9,4 @@ public class Main {
         //test db connnection
         MyDb db = MyDb.getInstance();
     }
-}it
+}
