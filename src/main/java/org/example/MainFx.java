@@ -1,5 +1,8 @@
 package org.example;
 
+import io.github.palexdev.materialfx.theming.JavaFXThemes;
+import io.github.palexdev.materialfx.theming.MaterialFXStylesheets;
+import io.github.palexdev.materialfx.theming.UserAgentBuilder;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,12 +19,25 @@ public class MainFx extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
+
+        //template fixe
+        UserAgentBuilder.builder()
+                .themes(JavaFXThemes.MODENA)
+                .themes(MaterialFXStylesheets.forAssemble(true))
+                .setDeploy(true)
+                .setResolveAssets(true)
+                .build()
+                .setGlobal();
+
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/AjouterFormation.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
+
+
         primaryStage.setScene(scene);
-        primaryStage.setWidth(1000);
-        primaryStage.setHeight(600);
+        primaryStage.setWidth(1100);
+        primaryStage.setHeight(700);
         primaryStage.show();
     }
 }

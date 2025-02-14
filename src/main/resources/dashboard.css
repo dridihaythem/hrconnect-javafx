@@ -21,3 +21,24 @@
     -fx-text-fill: #fff;
     -fx-alignment: center-left;
 }
+.bg-white{
+    -fx-background-color: #fff;
+}
+
+
+.save-btn , .cancel-btn{
+    -fx-font-weight: bold;
+    -fx-min-width: 200;
+    -fx-padding: 15;
+}
+
+.save-btn{
+    -fx-text-fill: #fff !important;
+    -fx-background-color: linear-gradient(to right, #272b3f, #1e9e6b) !important;
+ }
+
+.cancel-btn{
+    -fx-text-fill: #fff !important;
+    -fx-background-color: linear-gradient(to right, #ccc, #ccc) !important;
+}
+
