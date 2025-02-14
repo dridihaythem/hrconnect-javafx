@@ -4,9 +4,9 @@ import java.util.Date;
 
 public class Formation {
 
-    private int id;
+    private int id,formateur_id;
 
-    private String image,title,description;
+    private String image,title,description,place;
 
     private boolean is_online , available_for_employee , available_for_intern;
 
@@ -16,11 +16,13 @@ public class Formation {
     public Formation() {
     }
 
-    public Formation(int id, String image, String title, String description, boolean is_online, boolean available_for_employee, boolean available_for_intern, Date start_date, Date end_date) {
+    public Formation(int id, int formateur_id, String image, String title, String description,String place, boolean is_online, boolean available_for_employee, boolean available_for_intern, Date start_date, Date end_date) {
         this.id = id;
+        this.formateur_id = formateur_id;
         this.image = image;
         this.title = title;
         this.description = description;
+        this.place = place;
         this.is_online = is_online;
         this.available_for_employee = available_for_employee;
         this.available_for_intern = available_for_intern;
@@ -28,10 +30,12 @@ public class Formation {
         this.end_date = end_date;
     }
 
-    public Formation(String image, String title, String description, boolean is_online, boolean available_for_employee, boolean available_for_intern, Date start_date, Date end_date) {
+    public Formation(int formateur_id,String image, String title, String description,String place, boolean is_online, boolean available_for_employee, boolean available_for_intern, Date start_date, Date end_date) {
+        this.formateur_id = formateur_id;
         this.image = image;
         this.title = title;
         this.description = description;
+        this.place = place;
         this.is_online = is_online;
         this.available_for_employee = available_for_employee;
         this.available_for_intern = available_for_intern;
@@ -45,6 +49,14 @@ public class Formation {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getFormateur_id() {
+        return formateur_id;
+    }
+
+    public void setFormateur_id(int formateur_id) {
+        this.formateur_id = formateur_id;
     }
 
     public String getImage() {
@@ -69,6 +81,14 @@ public class Formation {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getPlace() {
+        return place;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
     }
 
     public boolean isIs_online() {

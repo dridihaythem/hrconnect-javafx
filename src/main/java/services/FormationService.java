@@ -20,16 +20,18 @@ public class FormationService implements  Crud<Formation> {
 
     @Override
     public void create(Formation obj) throws Exception {
-        String sql = "insert into formations (title,description,image,is_online,available_for_employee,available_for_intern,start_date,end_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "insert into formations (formateur_id,title,description,image,is_online,place,available_for_employee,available_for_intern,start_date,end_date) VALUES (?,?, ?, ?,?, ?, ?, ?, ?, ?)";
         PreparedStatement  stmt = conn.prepareStatement(sql);
-        stmt.setString(1, obj.getTitle());
-        stmt.setString(2, obj.getDescription());
-        stmt.setString(3, obj.getImage());
-        stmt.setBoolean(4, obj.isIs_online());
-        stmt.setBoolean(5, obj.isAvailable_for_employee());
-        stmt.setBoolean(6, obj.isAvailable_for_intern());
-        stmt.setDate(7, new java.sql.Date(obj.getStart_date().getTime()));
-        stmt.setDate(8, new java.sql.Date(obj.getEnd_date().getTime()));
+        stmt.setInt(1,obj.getFormateur_id());
+        stmt.setString(2, obj.getTitle());
+        stmt.setString(3, obj.getDescription());
+        stmt.setString(4, obj.getImage());
+        stmt.setBoolean(5, obj.isIs_online());
+        stmt.setString(6, obj.getPlace());
+        stmt.setBoolean(7, obj.isAvailable_for_employee());
+        stmt.setBoolean(8, obj.isAvailable_for_intern());
+        stmt.setDate(9, new java.sql.Date(obj.getStart_date().getTime()));
+        stmt.setDate(10, new java.sql.Date(obj.getEnd_date().getTime()));
         stmt.executeUpdate();
     }
 
