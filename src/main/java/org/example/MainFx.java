@@ -30,7 +30,8 @@ public class MainFx extends Application {
                 .setGlobal();
 
 
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/AjouterFormation.fxml"));
+        //FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/AjouterFormation.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/ListeFormation.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
 

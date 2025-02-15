@@ -42,3 +42,40 @@
     -fx-background-color: linear-gradient(to right, #ccc, #ccc) !important;
 }
 
+
+/* table */
+.table-header{
+    -fx-background-color: #E5E5E5 !important;
+    -fx-padding: 14px 0px;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.table-header-label{
+    -fx-text-fill: #ccc !important;
+}
+
+.table-body{
+    -fx-padding: 10px 0px;
+}
+.table-body-label{
+}
+
+.table-edit-btn , .table-delete-btn{
+    -fx-cursor: hand;
+    -fx-border-radius: 50%;
+    -fx-min-height: 30px;
+    -fx-min-width: 30px;
+    -fx-max-height: 30px;
+    -fx-max-width: 30px;
+    -fx-background-radius: 50%;
+    -fx-alignment: center;
+}
+
+.table-delete-btn{
+    -fx-background-color: #d8726f;
+}
+
+.table-edit-btn{
+    -fx-background-color: #1e9e6b;
+}

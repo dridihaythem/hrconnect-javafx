@@ -72,7 +72,7 @@ public class FormationService implements  Crud<Formation> {
 
     @Override
     public List<Formation> getAll() throws Exception {
-        String sql = "select * from formations";
+        String sql = "select * from formations ORDER BY id DESC";
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         List<Formation> formations = new ArrayList<>();
@@ -85,8 +85,8 @@ public class FormationService implements  Crud<Formation> {
             formation.setIs_online(rs.getBoolean("is_online"));
             formation.setAvailable_for_employee(rs.getBoolean("available_for_employee"));
             formation.setAvailable_for_intern(rs.getBoolean("available_for_intern"));
-            formation.setStart_date(rs.getDate("start_date"));
-            formation.setEnd_date(rs.getDate("end_date"));
+            formation.setStart_date(rs.getTimestamp("start_date"));
+            formation.setEnd_date(rs.getTimestamp("end_date"));
             formations.add(formation);
         }
         return formations;
