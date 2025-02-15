@@ -97,7 +97,11 @@ public class FormationService implements  Crud<Formation> {
             formation.setAvailable_for_employee(rs.getBoolean("available_for_employee"));
             formation.setAvailable_for_intern(rs.getBoolean("available_for_intern"));
             formation.setStart_date(rs.getTimestamp("start_date"));
-            formation.setEnd_date(rs.getTimestamp("end_date"));
+            if(rs.getTimestamp("end_date") != null){
+                formation.setEnd_date(rs.getTimestamp("end_date"));
+            }else{
+                formation.setEnd_date(null);
+            }
             formations.add(formation);
         }
         return formations;

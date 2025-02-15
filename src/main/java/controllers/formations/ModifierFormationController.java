@@ -21,10 +21,7 @@ import utils.ShowMenu;
 
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class ModifierFormationController implements Initializable, ShowMenu {
 
@@ -86,6 +83,8 @@ public class ModifierFormationController implements Initializable, ShowMenu {
                 throw new InvalidInputException("L'emplacement est requis pour une formation en présentiel");
             }else if (!datefin.getText().isEmpty() && datefin.getCalendar().getTime().before(dateDebut.getCalendar().getTime())) {
                 throw new InvalidInputException("La date de fin doit être supérieure à la date de début");
+            }else if(!pourEmployes.isSelected() && !pourStagaires.isSelected()){
+                throw new InvalidInputException("Choisir au moins une catégorie de personnes");
             }
 
 
@@ -198,9 +197,10 @@ public class ModifierFormationController implements Initializable, ShowMenu {
         formateur.setValue(oldFormateur);
         typeFormation.setSelected(formation.isIs_online());
         emplacement.setText(formation.getPlace());
-        dateDebut.setText(formation.getStart_date().toString());
+        dateDebut.getCalendar().setTime(formation.getStart_date());
         if(formation.getEnd_date() != null){
-            datefin.setText(formation.getEnd_date().toString());
+            datefin.setCalendar(Calendar.getInstance());
+            datefin.getCalendar().setTime(formation.getEnd_date());
         }
         pourEmployes.setSelected(formation.isAvailable_for_employee());
         pourStagaires.setSelected(formation.isAvailable_for_intern());

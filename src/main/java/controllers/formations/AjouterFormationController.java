@@ -80,6 +80,8 @@ public class AjouterFormationController implements ShowMenu, Initializable {
                 throw new InvalidInputException("La date de début doit être supérieure à la date actuelle");
             } else if (!datefin.getText().isEmpty() && datefin.getCalendar().getTime().before(dateDebut.getCalendar().getTime())) {
                 throw new InvalidInputException("La date de fin doit être supérieure à la date de début");
+            }else if(!pourEmployes.isSelected() && !pourStagaires.isSelected()){
+                throw new InvalidInputException("Choisir au moins une catégorie de personnes");
             }
 
             Formation formation = new Formation(
