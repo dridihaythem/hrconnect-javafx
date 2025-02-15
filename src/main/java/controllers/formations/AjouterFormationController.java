@@ -1,5 +1,6 @@
 package controllers.formations;
 
+import exceptions.InvalidInputException;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import io.github.palexdev.materialfx.controls.MFXToggleButton;
@@ -7,6 +8,7 @@ import io.github.palexdev.materialfx.controls.legacy.MFXLegacyComboBox;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import jfxtras.scene.control.CalendarTextField;
 import models.Formateur;
 import models.Formation;
@@ -58,17 +60,61 @@ public class AjouterFormationController implements Initializable {
 
     @FXML
     void onSave(ActionEvent event) {
-        //TODO: check inputs
-        try{
-            //TODO : fixe time not working
-            fs.create(new Formation( formateur.getValue().getId(),"image", title.getText(), description.getText(),emplacement.getText(), typeFormation.isSelected(), pourEmployes.isSelected(), pourStagaires.isSelected(), dateDebut.getCalendar().getTime(), datefin.getCalendar().getTime()));
-            //TODO: show alert
-        }catch (Exception e){
-            //TODO : show alert
-            System.out.println(e.getMessage());
-        }
-    }
 
+        try {
+            if (title.getText().isEmpty()) {
+                throw new InvalidInputException("Le titre est requis");
+            } else if (description.getText().isEmpty()) {
+                throw new InvalidInputException("La description est requise");
+            } else if (formateur.getValue() == null) {
+                throw new InvalidInputException("Choisir un formateur");
+            } else if (!typeFormation.isSelected() && emplacement.getText().isEmpty()) {
+                throw new InvalidInputException("L'emplacement est requis pour une formation en présentiel");
+            } else if (dateDebut.getCalendar().getTime().before(new Date())) {
+                throw new InvalidInputException("La date de début doit être supérieure à la date actuelle");
+            } else if (!datefin.getText().isEmpty() && datefin.getCalendar().getTime().before(dateDebut.getCalendar().getTime())) {
+                throw new InvalidInputException("La date de fin doit être supérieure à la date de début");
+            }
+
+            Formation formation = new Formation(
+                    formateur.getValue().getId(),
+                    "image",
+                    title.getText(),
+                    description.getText(),
+                    emplacement.getText(),
+                    typeFormation.isSelected(),
+                    pourEmployes.isSelected(),
+                    pourStagaires.isSelected(),
+                    dateDebut.getCalendar().getTime()
+            );
+
+            if (!datefin.getText().isEmpty()) {
+                formation.setEnd_date(datefin.getCalendar().getTime());
+            }
+
+            fs.create(formation);
+
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Succès");
+            alert.setHeaderText(null);
+            alert.setContentText("Formation ajoutée avec succès");
+            alert.showAndWait();
+        }catch (InvalidInputException e){
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText(null);
+            alert.setContentText(e.getMessage());
+            alert.showAndWait();
+        }catch (Exception e){
+            System.out.println(e);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText(null);
+            alert.setContentText("An error has occured");
+            alert.showAndWait();
+        }
+
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -81,34 +127,35 @@ public class AjouterFormationController implements Initializable {
             throw new RuntimeException(e);
         }
 
-        // Set how the ComboBox should display items (showing only names)
-        formateur.setConverter(new javafx.util.StringConverter<>() {
-            @Override
-            public String toString(Formateur formateur) {
-                return formateur != null ? formateur.getFirstName() : "";
-            }
-
-            @Override
-            public Formateur fromString(String string) {
-                return formateur.getItems().stream()
-                        .filter(f -> f.getFirstName().equals(string))
-                        .findFirst()
-                        .orElse(null);
-            }
-        });
 
         // Custom cell factory to show only the name in the dropdown list
         formateur.setCellFactory(lv -> new javafx.scene.control.ListCell<>() {
             @Override
             protected void updateItem(Formateur formateur, boolean empty) {
                 super.updateItem(formateur, empty);
-                setText(empty || formateur == null ? "" : formateur.getFirstName());
+                setText(empty || formateur == null ? "" : formateur.getFirstName() + " " + formateur.getLastName());
+            }
+        });
+
+        // show name when selected
+        formateur.setButtonCell(new javafx.scene.control.ListCell<>() {
+            @Override
+            protected void updateItem(Formateur formateur, boolean empty) {
+                super.updateItem(formateur, empty);
+                setText(empty || formateur == null ? "" : formateur.getFirstName() + " " + formateur.getLastName());
             }
         });
 
 
         // Add formateurs to the ComboBox
         formateur.getItems().addAll(formateurs);
-    }
 
+        typeFormation.selectedProperty().addListener((observable, oldValue, newValue) -> {
+            if(newValue){
+                emplacement.setDisable(true);
+            }else{
+                emplacement.setDisable(false);
+            }
+        });
+    }
 }

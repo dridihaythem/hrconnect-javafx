@@ -30,8 +30,12 @@ public class FormationService implements  Crud<Formation> {
         stmt.setString(6, obj.getPlace());
         stmt.setBoolean(7, obj.isAvailable_for_employee());
         stmt.setBoolean(8, obj.isAvailable_for_intern());
-        stmt.setDate(9, new java.sql.Date(obj.getStart_date().getTime()));
-        stmt.setDate(10, new java.sql.Date(obj.getEnd_date().getTime()));
+        stmt.setTimestamp(9, new java.sql.Timestamp(obj.getStart_date().getTime()));
+        if (obj.getEnd_date() != null) {
+            stmt.setTimestamp(10, new java.sql.Timestamp(obj.getEnd_date().getTime()));
+        } else {
+            stmt.setNull(10, java.sql.Types.TIMESTAMP);
+        }
         stmt.executeUpdate();
     }
 
