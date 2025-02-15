@@ -93,6 +93,7 @@ public class FormationService implements  Crud<Formation> {
             formation.setDescription(rs.getString("description"));
             formation.setImage(rs.getString("image"));
             formation.setIs_online(rs.getBoolean("is_online"));
+            formation.setPlace(rs.getString("place"));
             formation.setAvailable_for_employee(rs.getBoolean("available_for_employee"));
             formation.setAvailable_for_intern(rs.getBoolean("available_for_intern"));
             formation.setStart_date(rs.getTimestamp("start_date"));

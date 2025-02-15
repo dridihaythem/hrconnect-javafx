@@ -93,7 +93,7 @@ public class ListeFormationController implements Initializable, ShowMenu {
 
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getId()),50));
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getTitle()),250));
-                    row.addCell(new TableCell(formations.get(i).getPlace() != null  ?  formations.get(i).getPlace() : "En ligne",140));
+                    row.addCell(new TableCell(formations.get(i).isIs_online() ? "En ligne" : formations.get(i).getPlace(),140));
 
                     String dispoPour = "";
                     if(formations.get(i).isAvailable_for_employee() && formations.get(i).isAvailable_for_intern()){

@@ -71,19 +71,9 @@ public class ModifierFormationController implements Initializable, ShowMenu {
     FormateurService formateurService = new FormateurService();
 
     @FXML
-    void onSave(ActionEvent event) throws InvalidInputException {
+    void onSave(ActionEvent event) {
 
-        if (title.getText().isEmpty()) {
-            throw new InvalidInputException("Le titre est requis");
-        } else if (description.getText().isEmpty()) {
-            throw new InvalidInputException("La description est requise");
-        } else if (formateur.getValue() == null) {
-            throw new InvalidInputException("Choisir un formateur");
-        } else if (!typeFormation.isSelected() && (emplacement.getText().isEmpty() || emplacement.getText() == "")) {
-            throw new InvalidInputException("L'emplacement est requis pour une formation en présentiel");
-        }else if (!datefin.getText().isEmpty() && datefin.getCalendar().getTime().before(dateDebut.getCalendar().getTime())) {
-            throw new InvalidInputException("La date de fin doit être supérieure à la date de début");
-        }
+        System.out.println(emplacement.getText());
 
         try {
             if (title.getText().isEmpty()) {
@@ -92,20 +82,20 @@ public class ModifierFormationController implements Initializable, ShowMenu {
                 throw new InvalidInputException("La description est requise");
             } else if (formateur.getValue() == null) {
                 throw new InvalidInputException("Choisir un formateur");
-            } else if (!typeFormation.isSelected() && (emplacement.getText().isEmpty() || emplacement.getText() == "")) {
+            } else if (!typeFormation.isSelected() && (emplacement.getText() == null || emplacement.getText().isEmpty())) {
                 throw new InvalidInputException("L'emplacement est requis pour une formation en présentiel");
             }else if (!datefin.getText().isEmpty() && datefin.getCalendar().getTime().before(dateDebut.getCalendar().getTime())) {
                 throw new InvalidInputException("La date de fin doit être supérieure à la date de début");
             }
 
-            System.out.println("here");
 
             formation.setTitle(title.getText());
             formation.setDescription(description.getText());
             formation.setFormateur_id(formateur.getValue().getId());
             formation.setIs_online(typeFormation.isSelected());
-            //System.out.println(emplacement.getText());
-            //formation.setPlace(emplacement.getText());
+            if(!formation.isIs_online()) {
+                formation.setPlace(emplacement.getText());
+            }
             formation.setAvailable_for_employee(pourEmployes.isSelected());
             formation.setAvailable_for_intern(pourStagaires.isSelected());
             formation.setStart_date(dateDebut.getCalendar().getTime());
@@ -165,8 +155,6 @@ public class ModifierFormationController implements Initializable, ShowMenu {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        emplacement.setDisable(false);
 
 
         // Custom cell factory to show only the name in the dropdown list
