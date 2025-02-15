@@ -7,21 +7,27 @@ import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import io.github.palexdev.materialfx.controls.legacy.MFXLegacyComboBox;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ListCell;
+import javafx.scene.layout.AnchorPane;
 import jfxtras.scene.control.CalendarTextField;
 import models.Formateur;
 import models.Formation;
 import services.FormateurService;
 import services.FormationService;
+import utils.ShowMenu;
 
+import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
-public class AjouterFormationController implements Initializable {
+public class AjouterFormationController implements ShowMenu, Initializable {
+
+    @FXML
+    private AnchorPane menu;
 
     @FXML
     private MFXButton cancelBtn;
@@ -99,13 +105,26 @@ public class AjouterFormationController implements Initializable {
             alert.setHeaderText(null);
             alert.setContentText("Formation ajoutée avec succès");
             alert.showAndWait();
-        }catch (InvalidInputException e){
+
+            //redirect to list
+
+            Parent root = null;
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/ListeFormation.fxml"));
+                root = loader.load();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+
+            title.getScene().setRoot(root);
+
+        } catch (InvalidInputException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erreur");
             alert.setHeaderText(null);
             alert.setContentText(e.getMessage());
             alert.showAndWait();
-        }catch (Exception e){
+        } catch (Exception e) {
             System.out.println(e);
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erreur");
@@ -118,6 +137,9 @@ public class AjouterFormationController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+
+        initializeMenu(menu);
+
         FormateurService fs = new FormateurService();
         List<Formateur> formateurs = new ArrayList<>();
 
@@ -129,7 +151,7 @@ public class AjouterFormationController implements Initializable {
 
 
         // Custom cell factory to show only the name in the dropdown list
-        formateur.setCellFactory(lv -> new javafx.scene.control.ListCell<>() {
+        formateur.setCellFactory(lv -> new ListCell<>() {
             @Override
             protected void updateItem(Formateur formateur, boolean empty) {
                 super.updateItem(formateur, empty);
@@ -138,7 +160,7 @@ public class AjouterFormationController implements Initializable {
         });
 
         // show name when selected
-        formateur.setButtonCell(new javafx.scene.control.ListCell<>() {
+        formateur.setButtonCell(new ListCell<>() {
             @Override
             protected void updateItem(Formateur formateur, boolean empty) {
                 super.updateItem(formateur, empty);
@@ -151,11 +173,26 @@ public class AjouterFormationController implements Initializable {
         formateur.getItems().addAll(formateurs);
 
         typeFormation.selectedProperty().addListener((observable, oldValue, newValue) -> {
-            if(newValue){
+            if (newValue) {
                 emplacement.setDisable(true);
-            }else{
+            } else {
                 emplacement.setDisable(false);
             }
         });
+
     }
+
+    @FXML
+    void OnClickCancelBtn() {
+        Parent root = null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/ListeFormation.fxml"));
+            root = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        title.getScene().setRoot(root);
+    }
+
 }

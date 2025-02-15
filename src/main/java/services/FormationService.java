@@ -42,21 +42,26 @@ public class FormationService implements  Crud<Formation> {
     @Override
     public void update(Formation obj) throws Exception {
         System.out.println(obj);
-        String sql = "update formations set title = ?, description = ?, image = ?, is_online = ?, available_for_employee = ?, available_for_intern = ?, start_date = ?, end_date = ? where id = ?";
+        String sql = "update formations set title = ?, description = ?, image = ?, is_online = ?, place = ? , available_for_employee = ?, available_for_intern = ?, start_date = ?, end_date = ? where id = ?";
         PreparedStatement  stmt = conn.prepareStatement(sql);
         stmt.setString(1, obj.getTitle());
         stmt.setString(2, obj.getDescription());
         stmt.setString(3, obj.getImage());
         stmt.setBoolean(4, obj.isIs_online());
-        stmt.setBoolean(5, obj.isAvailable_for_employee());
-        stmt.setBoolean(6, obj.isAvailable_for_intern());
-        stmt.setTimestamp(7, new java.sql.Timestamp(obj.getStart_date().getTime()));
-        if (obj.getEnd_date() != null) {
-            stmt.setTimestamp(8, new java.sql.Timestamp(obj.getEnd_date().getTime()));
-        } else {
-            stmt.setNull(8, java.sql.Types.TIMESTAMP);
+        if(obj.getPlace() != null){
+            stmt.setString(5, obj.getPlace());
+        }else{
+            stmt.setNull(5, java.sql.Types.VARCHAR);
         }
-        stmt.setInt(9, obj.getId());
+        stmt.setBoolean(6, obj.isAvailable_for_employee());
+        stmt.setBoolean(7, obj.isAvailable_for_intern());
+        stmt.setTimestamp(8, new java.sql.Timestamp(obj.getStart_date().getTime()));
+        if (obj.getEnd_date() != null) {
+            stmt.setTimestamp(9, new java.sql.Timestamp(obj.getEnd_date().getTime()));
+        } else {
+            stmt.setNull(9, java.sql.Types.TIMESTAMP);
+        }
+        stmt.setInt(10, obj.getId());
         stmt.executeUpdate();
     }
 
