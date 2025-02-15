@@ -58,21 +58,24 @@ public class TableRow {
         }else {
             container.getStyleClass().add("table-edit-btn");
         }
-        FontAwesomeIconView delete = new FontAwesomeIconView();
+
+        FontAwesomeIconView icon = new FontAwesomeIconView();
         if(type == TableControlBtn.DELETE) {
-            delete.setGlyphName("TRASH");
+            icon.setGlyphName("TRASH");
         }else {
-            delete.setGlyphName("EDIT");
+            icon.setGlyphName("EDIT");
         }
-        delete.setSize("20");
-        delete.setOnMouseClicked(event -> {
+        icon.setSize("20");
+        icon.setFill(javafx.scene.paint.Color.WHITE);
+
+        icon.setOnMouseClicked(event -> {
             if(type == TableControlBtn.EDIT){
                 onEdit.run();
             }else if(type == TableControlBtn.DELETE){
                 onDelete.run();
             }
         });
-        container.getChildren().add(delete);
+        container.getChildren().add(icon);
         return container;
     }
 }

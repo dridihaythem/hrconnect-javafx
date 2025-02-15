@@ -52,7 +52,7 @@
 }
 
 .table-header-label{
-    -fx-text-fill: #ccc !important;
+    -fx-text-fill: #555 !important;
 }
 
 .table-body{

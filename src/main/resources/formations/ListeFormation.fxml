@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -15,7 +16,10 @@
       <children>
          <VBox layoutX="41.0" layoutY="269.0" prefHeight="650.4" prefWidth="900.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
           <children>
-                  <Button mnemonicParsing="false" onAction="#AjouterFormation" text="Ajouter une formation" />
+                  <Button mnemonicParsing="false" onAction="#AjouterFormation" styleClass="save-btn" text="Ajouter une formation">
+                     <graphic>
+                        <FontAwesomeIconView fill="WHITE" glyphName="PLUS" size="16" />
+                     </graphic></Button>
                <VBox fx:id="vbox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             </children>
             <opaqueInsets>
