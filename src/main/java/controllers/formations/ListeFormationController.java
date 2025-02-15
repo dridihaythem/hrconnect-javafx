@@ -42,10 +42,17 @@ public class ListeFormationController implements Initializable {
 
 
            for(int i = 0;i<formations.size();i++) {
+               int finalI = i;
                TableRow row = new TableRow(TableRowType.BODY,()->{
                    System.out.println("Edit");
                },()->{
-                   System.out.println("Delete");
+                 try{
+                     fs.delete(formations.get(finalI).getId());
+                     vbox.getChildren().clear();
+                     initialize(location,resources);
+                 }catch (Exception e){
+                     System.out.println(e);
+                 }
                });
 
                row.addCell(new TableCell(String.valueOf(formations.get(i).getId()),50));
