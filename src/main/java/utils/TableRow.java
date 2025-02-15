@@ -45,8 +45,12 @@ public class TableRow {
             hBox.getChildren().add(lb);
         }
         if(type == TableRowType.BODY) {
-            hBox.getChildren().add(buildControlBtn(TableControlBtn.EDIT));
-            hBox.getChildren().add(buildControlBtn(TableControlBtn.DELETE));
+            if(onEdit != null) {
+                hBox.getChildren().add(buildControlBtn(TableControlBtn.EDIT));
+            }
+            if(onDelete != null) {
+                hBox.getChildren().add(buildControlBtn(TableControlBtn.DELETE));
+            }
         }
         return hBox;
     }

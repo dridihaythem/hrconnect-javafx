@@ -54,56 +54,61 @@ public class ListeFormationController implements Initializable, ShowMenu {
         try {
             List<Formation> formations = fs.getAll();
 
+            if(formations.isEmpty()){
+                TableRow row = new TableRow(TableRowType.BODY);
+                row.addCell(new TableCell("Aucune formation trouvée", 140));
+                vbox.getChildren().add(row.build());
+            }else{
+                for(int i = 0;i<formations.size();i++) {
+                    int finalI = i;
+                    TableRow row = new TableRow(TableRowType.BODY,()->{
+                        Parent root = null;
+                        try {
+                            FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/ModifierFormation.fxml"));
+                            root = loader.load();
+                            ModifierFormationController controller = loader.getController();
+                            controller.setFormation(formations.get(finalI));
+                        } catch (IOException | SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                        vbox.getScene().setRoot(root);
 
-           for(int i = 0;i<formations.size();i++) {
-               int finalI = i;
-               TableRow row = new TableRow(TableRowType.BODY,()->{
-                   Parent root = null;
-                   try {
-                       FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/ModifierFormation.fxml"));
-                       root = loader.load();
-                       ModifierFormationController controller = loader.getController();
-                       controller.setFormation(formations.get(finalI));
-                   } catch (IOException | SQLException e) {
-                       throw new RuntimeException(e);
-                   }
-                   vbox.getScene().setRoot(root);
+                    },()->{
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Confirmation de suppression");
+                        alert.setHeaderText("Êtes-vous sûr de vouloir supprimer cette formation ?");
+                        alert.setContentText("Cette action est irréversible.");
 
-               },()->{
-                   Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                   alert.setTitle("Confirmation de suppression");
-                   alert.setHeaderText("Êtes-vous sûr de vouloir supprimer cette formation ?");
-                   alert.setContentText("Cette action est irréversible.");
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.get() == ButtonType.OK){
+                            try{
+                                fs.delete(formations.get(finalI).getId());
+                                vbox.getChildren().clear();
+                                initialize(location,resources);
+                            }catch (Exception e){
+                                System.out.println(e);
+                            }
+                        }
+                    });
 
-                   Optional<ButtonType> result = alert.showAndWait();
-                     if (result.get() == ButtonType.OK){
-                          try{
-                            fs.delete(formations.get(finalI).getId());
-                            vbox.getChildren().clear();
-                            initialize(location,resources);
-                          }catch (Exception e){
-                            System.out.println(e);
-                          }
-                     }
-               });
+                    row.addCell(new TableCell(String.valueOf(formations.get(i).getId()),50));
+                    row.addCell(new TableCell(String.valueOf(formations.get(i).getTitle()),250));
+                    row.addCell(new TableCell(formations.get(i).getPlace() != null  ?  formations.get(i).getPlace() : "En ligne",140));
 
-               row.addCell(new TableCell(String.valueOf(formations.get(i).getId()),50));
-               row.addCell(new TableCell(String.valueOf(formations.get(i).getTitle()),250));
-               row.addCell(new TableCell(formations.get(i).getPlace() != null  ?  formations.get(i).getPlace() : "En ligne",140));
+                    String dispoPour = "";
+                    if(formations.get(i).isAvailable_for_employee() && formations.get(i).isAvailable_for_intern()){
+                        dispoPour = "Employés/Stagaires";
+                    }else if(formations.get(i).isAvailable_for_employee()){
+                        dispoPour = "Employes";
+                    }else if(formations.get(i).isAvailable_for_intern()){
+                        dispoPour = "Stagaires";
+                    }
+                    row.addCell(new TableCell(dispoPour,140));
+                    row.addCell(new TableCell(String.valueOf(formations.get(i).getStart_date()),140));
+                    row.addCell(new TableCell(String.valueOf(formations.get(i).getEnd_date()),140));
 
-               String dispoPour = "";
-               if(formations.get(i).isAvailable_for_employee() && formations.get(i).isAvailable_for_intern()){
-                   dispoPour = "Employés/Stagaires";
-               }else if(formations.get(i).isAvailable_for_employee()){
-                   dispoPour = "Employes";
-               }else if(formations.get(i).isAvailable_for_intern()){
-                   dispoPour = "Stagaires";
-               }
-               row.addCell(new TableCell(dispoPour,140));
-               row.addCell(new TableCell(String.valueOf(formations.get(i).getStart_date()),140));
-               row.addCell(new TableCell(String.valueOf(formations.get(i).getEnd_date()),140));
-
-               vbox.getChildren().add(row.build());
+                    vbox.getChildren().add(row.build());
+                }
             }
 
         } catch (Exception e) {
