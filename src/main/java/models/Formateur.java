@@ -1,5 +1,7 @@
 package models;
 
+import java.util.Objects;
+
 public class Formateur {
     int id;
 
@@ -45,5 +47,17 @@ public class Formateur {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Formateur formateur)) return false;
+        return id == formateur.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

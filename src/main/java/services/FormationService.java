@@ -41,6 +41,7 @@ public class FormationService implements  Crud<Formation> {
 
     @Override
     public void update(Formation obj) throws Exception {
+        System.out.println(obj);
         String sql = "update formations set title = ?, description = ?, image = ?, is_online = ?, available_for_employee = ?, available_for_intern = ?, start_date = ?, end_date = ? where id = ?";
         PreparedStatement  stmt = conn.prepareStatement(sql);
         stmt.setString(1, obj.getTitle());
@@ -49,8 +50,12 @@ public class FormationService implements  Crud<Formation> {
         stmt.setBoolean(4, obj.isIs_online());
         stmt.setBoolean(5, obj.isAvailable_for_employee());
         stmt.setBoolean(6, obj.isAvailable_for_intern());
-        stmt.setDate(7, new java.sql.Date(obj.getStart_date().getTime()));
-        stmt.setDate(8, new java.sql.Date(obj.getEnd_date().getTime()));
+        stmt.setTimestamp(7, new java.sql.Timestamp(obj.getStart_date().getTime()));
+        if (obj.getEnd_date() != null) {
+            stmt.setTimestamp(8, new java.sql.Timestamp(obj.getEnd_date().getTime()));
+        } else {
+            stmt.setNull(8, java.sql.Types.TIMESTAMP);
+        }
         stmt.setInt(9, obj.getId());
         stmt.executeUpdate();
     }

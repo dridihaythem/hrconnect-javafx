@@ -1,14 +1,18 @@
 package controllers.formations;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 
+import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.VBox;
@@ -47,7 +51,17 @@ public class ListeFormationController implements Initializable {
            for(int i = 0;i<formations.size();i++) {
                int finalI = i;
                TableRow row = new TableRow(TableRowType.BODY,()->{
-                   System.out.println("Edit");
+                   Parent root = null;
+                   try {
+                       FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/ModifierFormation.fxml"));
+                       root = loader.load();
+                       ModifierFormationController controller = loader.getController();
+                       controller.setFormation(formations.get(finalI));
+                   } catch (IOException | SQLException e) {
+                       throw new RuntimeException(e);
+                   }
+                   vbox.getScene().setRoot(root);
+
                },()->{
                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                    alert.setTitle("Confirmation de suppression");

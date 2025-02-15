@@ -4,9 +4,7 @@ import models.Formateur;
 import models.Formation;
 import utils.MyDb;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,5 +47,19 @@ public class FormateurService implements Crud<Formateur> {
             formateurs.add(f);
         }
         return formateurs;
+    }
+
+    public  Formateur getById(int id) throws SQLException {
+        String sql = "select * from formateurs where id = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, id);
+        ResultSet rs = stmt.executeQuery();
+        Formateur f = new Formateur();
+        if (rs.next()) {
+            f.setId(rs.getInt("id"));
+            f.setFirstName(rs.getString("first_name"));
+            f.setLastName(rs.getString("last_name"));
+        }
+        return f;
     }
 }
