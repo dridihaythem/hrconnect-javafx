@@ -5,9 +5,12 @@ import javafx.fxml.Initializable;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.layout.VBox;
 import models.Formation;
 import services.FormationService;
@@ -46,13 +49,21 @@ public class ListeFormationController implements Initializable {
                TableRow row = new TableRow(TableRowType.BODY,()->{
                    System.out.println("Edit");
                },()->{
-                 try{
-                     fs.delete(formations.get(finalI).getId());
-                     vbox.getChildren().clear();
-                     initialize(location,resources);
-                 }catch (Exception e){
-                     System.out.println(e);
-                 }
+                   Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                   alert.setTitle("Confirmation de suppression");
+                   alert.setHeaderText("Êtes-vous sûr de vouloir supprimer cette formation ?");
+                   alert.setContentText("Cette action est irréversible.");
+
+                   Optional<ButtonType> result = alert.showAndWait();
+                     if (result.get() == ButtonType.OK){
+                          try{
+                            fs.delete(formations.get(finalI).getId());
+                            vbox.getChildren().clear();
+                            initialize(location,resources);
+                          }catch (Exception e){
+                            System.out.println(e);
+                          }
+                     }
                });
 
                row.addCell(new TableCell(String.valueOf(formations.get(i).getId()),50));
