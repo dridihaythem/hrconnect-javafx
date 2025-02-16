@@ -68,72 +68,74 @@ public class ListeQuizController implements Initializable,ShowMenu {
     public void initialize(URL location, ResourceBundle resources) {
         initializeMenu(menu);
 
-        TableRow header = new TableRow(TableRowType.HEADER);
-        header.addCell(new TableCell("ID",50));
-        header.addCell(new TableCell("Question",250));
-        header.addCell(new TableCell("Type", 140));
-        header.addCell(new TableCell("Response 1", 140));
-        header.addCell(new TableCell("Response 2", 140));
-        header.addCell(new TableCell("Response 3", 140));
-        header.addCell(new TableCell("?", 140));
+        if(formation != null) {
+            TableRow header = new TableRow(TableRowType.HEADER);
+            header.addCell(new TableCell("ID", 50));
+            header.addCell(new TableCell("Question", 250));
+            header.addCell(new TableCell("Type", 140));
+            header.addCell(new TableCell("Response 1", 140));
+            header.addCell(new TableCell("Response 2", 140));
+            header.addCell(new TableCell("Response 3", 140));
+            header.addCell(new TableCell("?", 140));
 
 
-        vbox.getChildren().add(header.build());
+            vbox.getChildren().add(header.build());
 
-        try {
-            List<Quiz> quizs = qz.getAll();
+            try {
+                List<Quiz> quizs = qz.getAll(formation.getId());
 
-            if(quizs.isEmpty()){
-                TableRow row = new TableRow(TableRowType.BODY);
-                row.addCell(new TableCell("Aucun question trouvée", 140));
-                vbox.getChildren().add(row.build());
-            }else{
-                for(int i = 0;i<quizs.size();i++) {
-                    int finalI = i;
+                if (quizs.isEmpty()) {
                     TableRow row = new TableRow(TableRowType.BODY);
-
-                    row.addCell(new TableCell(String.valueOf(quizs.get(i).getId()),50));
-                    row.addCell(new TableCell(String.valueOf(quizs.get(i).getQuestion()),250));
-                    String type;
-                    if(quizs.get(i).getType() == QuizType.SINGLE) {
-                        type = "Choix unique";
-                    }else{
-                        type = "Choix multiple";
-                    }
-                    row.addCell(new TableCell(String.valueOf(type),140));
-                    row.addCell(new TableCell(String.valueOf(quizs.get(i).getReponse1()),140));
-                    row.addCell(new TableCell(String.valueOf(quizs.get(i).getReponse2()),140));
-                    row.addCell(new TableCell(String.valueOf(quizs.get(i).getReponse3()),140));
-
-
-                    row.addAction("EDIT","table-edit-btn",()->{
-
-                    });
-
-                    row.addAction("TRASH","table-delete-btn",()->{
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setTitle("Confirmation de suppression");
-                        alert.setHeaderText("Êtes-vous sûr de vouloir supprimer la question ?");
-                        alert.setContentText("Cette action est irréversible.");
-
-                        Optional<ButtonType> result = alert.showAndWait();
-                        if (result.get() == ButtonType.OK){
-                            try{
-                                qz.delete(quizs.get(finalI).getId());
-                                vbox.getChildren().clear();
-                                initialize(location,resources);
-                            }catch (Exception e){
-                                System.out.println(e);
-                            }
-                        }
-                    });
-
+                    row.addCell(new TableCell("Aucun question trouvée", 140));
                     vbox.getChildren().add(row.build());
-                }
-            }
+                } else {
+                    for (int i = 0; i < quizs.size(); i++) {
+                        int finalI = i;
+                        TableRow row = new TableRow(TableRowType.BODY);
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+                        row.addCell(new TableCell(String.valueOf(quizs.get(i).getId()), 50));
+                        row.addCell(new TableCell(String.valueOf(quizs.get(i).getQuestion()), 250));
+                        String type;
+                        if (quizs.get(i).getType() == QuizType.SINGLE) {
+                            type = "Choix unique";
+                        } else {
+                            type = "Choix multiple";
+                        }
+                        row.addCell(new TableCell(String.valueOf(type), 140));
+                        row.addCell(new TableCell(String.valueOf(quizs.get(i).getReponse1()), 140));
+                        row.addCell(new TableCell(String.valueOf(quizs.get(i).getReponse2()), 140));
+                        row.addCell(new TableCell(String.valueOf(quizs.get(i).getReponse3()), 140));
+
+
+                        row.addAction("EDIT", "table-edit-btn", () -> {
+
+                        });
+
+                        row.addAction("TRASH", "table-delete-btn", () -> {
+                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                            alert.setTitle("Confirmation de suppression");
+                            alert.setHeaderText("Êtes-vous sûr de vouloir supprimer la question ?");
+                            alert.setContentText("Cette action est irréversible.");
+
+                            Optional<ButtonType> result = alert.showAndWait();
+                            if (result.get() == ButtonType.OK) {
+                                try {
+                                    qz.delete(quizs.get(finalI).getId());
+                                    vbox.getChildren().clear();
+                                    initialize(location, resources);
+                                } catch (Exception e) {
+                                    System.out.println(e);
+                                }
+                            }
+                        });
+
+                        vbox.getChildren().add(row.build());
+                    }
+                }
+
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -141,6 +143,8 @@ public class ListeQuizController implements Initializable,ShowMenu {
         this.formation = formation;
 
         foamtionTitle.setText(this.formation.getTitle());
+
+        initialize(null,null);
     }
 
 

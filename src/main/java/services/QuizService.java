@@ -76,4 +76,23 @@ public class QuizService implements Crud<Quiz> {
         }
         return quizs;
     }
+
+    public List<Quiz> getAll(int formationId) throws Exception {
+        String sql = "select * from quiz where formation_id = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, formationId);
+        ResultSet rs = stmt.executeQuery();
+        List<Quiz> quizs = new ArrayList<>();
+        while (rs.next()) {
+            Quiz quiz = new Quiz();
+            quiz.setId(rs.getInt("id"));
+            quiz.setQuestion(rs.getString("question"));
+            quiz.setType(QuizType.valueOf(rs.getString("type")));
+            quiz.setReponse1(rs.getString("reponse1"));
+            quiz.setReponse2(rs.getString("reponse2"));
+            quiz.setReponse3(rs.getString("reponse3"));
+            quizs.add(quiz);
+        }
+        return quizs;
+    }
 }
