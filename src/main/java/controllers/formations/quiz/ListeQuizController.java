@@ -111,7 +111,21 @@ public class ListeQuizController implements Initializable,ShowMenu {
                     });
 
                     row.addAction("TRASH","table-delete-btn",()->{
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Confirmation de suppression");
+                        alert.setHeaderText("Êtes-vous sûr de vouloir supprimer la question ?");
+                        alert.setContentText("Cette action est irréversible.");
 
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.get() == ButtonType.OK){
+                            try{
+                                qz.delete(quizs.get(finalI).getId());
+                                vbox.getChildren().clear();
+                                initialize(location,resources);
+                            }catch (Exception e){
+                                System.out.println(e);
+                            }
+                        }
                     });
 
                     vbox.getChildren().add(row.build());

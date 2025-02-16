@@ -51,6 +51,13 @@ public class QuizService implements Crud<Quiz> {
 
     }
 
+    public void delete(int id) throws Exception {
+        String sql = "delete from quiz where id = ?";
+        PreparedStatement  stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, id);
+        stmt.executeUpdate();
+    }
+
     @Override
     public List<Quiz> getAll() throws Exception {
         String sql = "select * from quiz ORDER BY id DESC";
