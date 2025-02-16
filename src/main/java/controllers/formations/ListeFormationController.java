@@ -80,7 +80,7 @@ public class ListeFormationController implements Initializable, ShowMenu {
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getStart_date()),140));
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getEnd_date()),140));
 
-                    row.addAction("EDIT","table-edit-btn",()->{
+                    row.addAction("QUESTION","table-show-btn",()->{
                         Parent root = null;
                         try {
                             FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/quiz/ListeQuiz.fxml"));

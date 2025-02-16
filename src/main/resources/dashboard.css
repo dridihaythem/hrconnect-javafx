@@ -61,7 +61,7 @@
 .table-body-label{
 }
 
-.table-edit-btn , .table-delete-btn{
+.table-show-btn , .table-edit-btn , .table-delete-btn{
     -fx-cursor: hand;
     -fx-border-radius: 50%;
     -fx-min-height: 30px;
@@ -78,4 +78,8 @@
 
 .table-edit-btn{
     -fx-background-color: #1e9e6b;
+}
+
+.table-show-btn{
+    -fx-background-color: #0984e3;
 }

@@ -1,10 +1,15 @@
 package services;
 
+import models.Formation;
 import models.Quiz;
 import utils.MyDb;
+import utils.enums.QuizType;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.List;
 
 public class QuizService implements Crud<Quiz> {
@@ -48,6 +53,20 @@ public class QuizService implements Crud<Quiz> {
 
     @Override
     public List<Quiz> getAll() throws Exception {
-        return List.of();
+        String sql = "select * from quiz ORDER BY id DESC";
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        List<Quiz> quizs = new ArrayList<>();
+        while (rs.next()) {
+            Quiz quiz = new Quiz();
+            quiz.setId(rs.getInt("id"));
+            quiz.setQuestion(rs.getString("question"));
+            quiz.setType(QuizType.valueOf(rs.getString("type")));
+            quiz.setReponse1(rs.getString("reponse1"));
+            quiz.setReponse2(rs.getString("reponse2"));
+            quiz.setReponse3(rs.getString("reponse3"));
+            quizs.add(quiz);
+        }
+        return quizs;
     }
 }

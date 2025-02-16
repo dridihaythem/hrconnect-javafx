@@ -31,7 +31,7 @@
                   <HBox alignment="BASELINE_LEFT" prefHeight="34.0" prefWidth="834.0" spacing="20.0">
                      <children>
                         <Text text="Type" />
-                        <MFXRadioButton fx:id="SimpleChoix" text="Simple Choix">
+                        <MFXRadioButton fx:id="SimpleChoix" text="Choix unique">
                            <toggleGroup>
                               <ToggleGroup fx:id="QuestionType" />
                            </toggleGroup>
