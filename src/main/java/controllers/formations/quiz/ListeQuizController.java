@@ -17,6 +17,7 @@ import services.QuizService;
 import utils.ShowMenu;
 
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Calendar;
@@ -108,7 +109,16 @@ public class ListeQuizController implements Initializable,ShowMenu {
 
 
                         row.addAction("EDIT", "table-edit-btn", () -> {
-
+                            Parent root = null;
+                            try {
+                                FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/quiz/ModifierQuiz.fxml"));
+                                root = loader.load();
+                                ModifierQuizController controller = loader.getController();
+                                controller.setData(formation, quizs.get(finalI));
+                            } catch (IOException | SQLException e) {
+                                throw new RuntimeException(e);
+                            }
+                            vbox.getScene().setRoot(root);
                         });
 
                         row.addAction("TRASH", "table-delete-btn", () -> {
