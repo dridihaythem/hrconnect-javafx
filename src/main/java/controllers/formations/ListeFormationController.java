@@ -1,5 +1,6 @@
 package controllers.formations;
 
+import controllers.formations.quiz.ListeQuizController;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -61,35 +62,7 @@ public class ListeFormationController implements Initializable, ShowMenu {
             }else{
                 for(int i = 0;i<formations.size();i++) {
                     int finalI = i;
-                    TableRow row = new TableRow(TableRowType.BODY,()->{
-                        Parent root = null;
-                        try {
-                            FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/ModifierFormation.fxml"));
-                            root = loader.load();
-                            ModifierFormationController controller = loader.getController();
-                            controller.setFormation(formations.get(finalI));
-                        } catch (IOException | SQLException e) {
-                            throw new RuntimeException(e);
-                        }
-                        vbox.getScene().setRoot(root);
-
-                    },()->{
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                        alert.setTitle("Confirmation de suppression");
-                        alert.setHeaderText("Êtes-vous sûr de vouloir supprimer cette formation ?");
-                        alert.setContentText("Cette action est irréversible.");
-
-                        Optional<ButtonType> result = alert.showAndWait();
-                        if (result.get() == ButtonType.OK){
-                            try{
-                                fs.delete(formations.get(finalI).getId());
-                                vbox.getChildren().clear();
-                                initialize(location,resources);
-                            }catch (Exception e){
-                                System.out.println(e);
-                            }
-                        }
-                    });
+                    TableRow row = new TableRow(TableRowType.BODY);
 
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getId()),50));
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getTitle()),250));
@@ -106,6 +79,50 @@ public class ListeFormationController implements Initializable, ShowMenu {
                     row.addCell(new TableCell(dispoPour,140));
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getStart_date()),140));
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getEnd_date()),140));
+
+                    row.addAction("EDIT","table-edit-btn",()->{
+                        Parent root = null;
+                        try {
+                            FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/quiz/ListeQuiz.fxml"));
+                            root = loader.load();
+                            ListeQuizController controller = loader.getController();
+                            controller.setFormation(formations.get(finalI));
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                        vbox.getScene().setRoot(root);
+                    });
+
+                    row.addAction("EDIT","table-edit-btn",()->{
+                        Parent root = null;
+                        try {
+                            FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/ModifierFormation.fxml"));
+                            root = loader.load();
+                            ModifierFormationController controller = loader.getController();
+                            controller.setFormation(formations.get(finalI));
+                        } catch (IOException | SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                        vbox.getScene().setRoot(root);
+                    });
+
+                    row.addAction("TRASH","table-delete-btn",()->{
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        alert.setTitle("Confirmation de suppression");
+                        alert.setHeaderText("Êtes-vous sûr de vouloir supprimer cette formation ?");
+                        alert.setContentText("Cette action est irréversible.");
+
+                        Optional<ButtonType> result = alert.showAndWait();
+                        if (result.get() == ButtonType.OK){
+                            try{
+                                fs.delete(formations.get(finalI).getId());
+                                vbox.getChildren().clear();
+                                initialize(location,resources);
+                            }catch (Exception e){
+                                System.out.println(e);
+                            }
+                        }
+                    });
 
                     vbox.getChildren().add(row.build());
                 }

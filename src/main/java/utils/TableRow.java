@@ -14,18 +14,12 @@ public class TableRow {
     TableRowType type;
     String classe;
     List<TableCell> cells;
-    Runnable onDelete;
-    Runnable onEdit;
+    List<HBox> actions;
 
     public TableRow(TableRowType type) {
         this.type = type;
         this.cells = new ArrayList();
-    }
-
-    public TableRow(TableRowType type,Runnable onEdit,Runnable onDelete) {
-        this(type);
-        this.onEdit = onEdit;
-        this.onDelete = onDelete;
+        this.actions = new ArrayList<>();
     }
 
     public void addCell(TableCell row) {
@@ -45,41 +39,27 @@ public class TableRow {
             hBox.getChildren().add(lb);
         }
         if(type == TableRowType.BODY) {
-            if(onEdit != null) {
-                hBox.getChildren().add(buildControlBtn(TableControlBtn.EDIT));
-            }
-            if(onDelete != null) {
-                hBox.getChildren().add(buildControlBtn(TableControlBtn.DELETE));
-            }
+            actions.forEach(action -> {
+                hBox.getChildren().add(action);
+            });
         }
         return hBox;
     }
 
-    private HBox buildControlBtn(TableControlBtn type){
+    public void addAction(String iconName,String classe,Runnable action){
         HBox container = new HBox();
-        if(type == TableControlBtn.DELETE) {
-            container.getStyleClass().add("table-delete-btn");
-        }else {
-            container.getStyleClass().add("table-edit-btn");
-        }
+        container.getStyleClass().add(classe);
 
         FontAwesomeIconView icon = new FontAwesomeIconView();
-        if(type == TableControlBtn.DELETE) {
-            icon.setGlyphName("TRASH");
-        }else {
-            icon.setGlyphName("EDIT");
-        }
+        icon.setGlyphName(iconName);
         icon.setSize("20");
         icon.setFill(javafx.scene.paint.Color.WHITE);
 
         icon.setOnMouseClicked(event -> {
-            if(type == TableControlBtn.EDIT){
-                onEdit.run();
-            }else if(type == TableControlBtn.DELETE){
-                onDelete.run();
-            }
+            action.run();
         });
         container.getChildren().add(icon);
-        return container;
+        actions.add(container);
     }
+
 }

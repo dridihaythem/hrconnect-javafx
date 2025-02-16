@@ -1,8 +1,11 @@
 package org.example;
 
 import models.Formation;
+import models.Quiz;
 import services.FormationService;
+import services.QuizService;
 import utils.MyDb;
+import utils.enums.QuizType;
 
 import java.util.Date;
 import java.util.List;
@@ -10,9 +13,12 @@ import java.util.List;
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         //test db connnection
         MyDb db = MyDb.getInstance();
+
+        QuizService qs = new QuizService();
+        qs.create(new Quiz(1,  QuizType.SINGLE,"question", "reponse1", "reponse2", "reponse3"));
 
        /* FormationService fs = new FormationService();
 
