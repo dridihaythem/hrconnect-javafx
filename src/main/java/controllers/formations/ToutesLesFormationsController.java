@@ -102,8 +102,17 @@ public class ToutesLesFormationsController implements Initializable, ShowMenu {
                             alert.setContentText("Vous êtes inscrit à la formation " + formation.getTitle());
                             alert.showAndWait();
 
-                            vbox.getChildren().clear();
-                            initialize(location, resources);
+                            //vbox.getChildren().clear();
+                            //initialize(location, resources);
+
+                            Parent root = null;
+                            try {
+                                FXMLLoader loader1 = new FXMLLoader(getClass().getResource("/formations/MesFormations.fxml"));
+                                root = loader1.load();
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                            vbox.getScene().setRoot(root);
 
 
                         } catch (Exception e) {
