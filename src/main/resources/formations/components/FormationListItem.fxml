@@ -65,9 +65,9 @@
                 </HBox>
             </children>
         </VBox>
-        <MFXButton fx:id="inscrire" styleClass="save-btn" text="S'inscire">
+        <MFXButton fx:id="inscrireBtn" styleClass="save-btn" text="S'inscire">
             <graphic>
-                <FontAwesomeIconView fill="WHITE" size="20" />
+                <FontAwesomeIconView fill="WHITE" glyphName="PLUS" size="20" />
             </graphic>
         </MFXButton>
     </children>

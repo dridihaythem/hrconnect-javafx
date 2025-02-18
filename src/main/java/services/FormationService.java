@@ -109,9 +109,8 @@ public class FormationService implements  Crud<Formation> {
     }
 
     public List<Formation> getAllFormationsForUser() throws Exception {
-        String sql = "select a.id,a.title,a.image,a.is_online,a.description,a.place,a.start_date,a.end_date,b.first_name,b.last_name from formations a , formateurs b \n" +
-                "WHERE a.formateur_id = b.id\n" +
-                "ORDER BY id DESC";
+
+        String sql = "SELECT a.id, a.title, a.image, a.is_online, a.description, a.place, a.start_date, a.end_date, b.first_name, b.last_name FROM formations a JOIN formateurs b ON a.formateur_id = b.id WHERE a.id NOT IN ( SELECT formation_id FROM formation_participation WHERE employe_id = 18 ) ORDER BY a.id DESC";
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         List<Formation> formations = new ArrayList<>();
@@ -136,5 +135,13 @@ public class FormationService implements  Crud<Formation> {
             formations.add(formation);
         }
         return formations;
+    }
+
+    public void participerFormation(int formation_id,int employe_id) throws Exception {
+        String sql = "insert into  formation_participation (formation_id,employe_id) VALUES (?,?)";
+        PreparedStatement  stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, formation_id);
+        stmt.setInt(2, employe_id);
+        stmt.executeUpdate();
     }
 }

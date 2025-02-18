@@ -53,43 +53,73 @@ public class ToutesLesFormationsController implements Initializable, ShowMenu {
             throw new RuntimeException(e);
         }
 
-        for(int i=0;i<formations.size();i++){
+        if(formations.size() == 0){
+            Label label = new Label("Aucune formation disponible pour vous");
+            label.setFont(new Font(20));
+            vbox.getChildren().add(label);
+        }else{
 
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/components/FormationListItem.fxml"));
-                Parent xmlContent = loader.load();
+            for(int i=0;i<formations.size();i++){
 
-                ImageView imageView = (ImageView) loader.getNamespace().get("imageView");
-                imageView.setImage(new Image(formations.get(i).getImage()));
+                final Formation formation = formations.get(i);
+
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/components/FormationListItem.fxml"));
+                    Parent xmlContent = loader.load();
+
+                    ImageView imageView = (ImageView) loader.getNamespace().get("imageView");
+                    imageView.setImage(new Image(formation.getImage()));
 
 
-                Label title = (Label) loader.getNamespace().get("title");
-                title.setText(formations.get(i).getTitle());
+                    Label title = (Label) loader.getNamespace().get("title");
+                    title.setText(formation.getTitle());
 
-                Label place = (Label) loader.getNamespace().get("place");
-                if(formations.get(i).isIs_online()){
-                    place.setText("En ligne");
-                }else {
-                    place.setText(formations.get(i).getPlace());
+                    Label place = (Label) loader.getNamespace().get("place");
+                    if(formation.isIs_online()){
+                        place.setText("En ligne");
+                    }else {
+                        place.setText(formation.getPlace());
+                    }
+
+                    Label description = (Label) loader.getNamespace().get("description");
+                    title.setText(formation.getDescription());
+
+
+                    Label formateur = (Label) loader.getNamespace().get("formateur");
+                    formateur.setText(formation.getFormateur().getFirstName() + " " + formation.getFormateur().getLastName());
+
+                    Label StarDate = (Label) loader.getNamespace().get("startDate");
+                    StarDate.setText(formation.getStart_date().toString());
+
+                    MFXButton inscrireButton = (MFXButton) loader.getNamespace().get("inscrireBtn");
+                    inscrireButton.setOnAction(event -> {
+                        try {
+                            fs.participerFormation(formation.getId(),18);
+
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Inscription");
+                            alert.setHeaderText("Inscription réussie");
+                            alert.setContentText("Vous êtes inscrit à la formation " + formation.getTitle());
+                            alert.showAndWait();
+
+                            vbox.getChildren().clear();
+                            initialize(location, resources);
+
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    });
+
+
+                    vbox.getChildren().add(xmlContent);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
 
-                Label description = (Label) loader.getNamespace().get("description");
-                title.setText(formations.get(i).getDescription());
-
-
-                Label formateur = (Label) loader.getNamespace().get("formateur");
-                formateur.setText(formations.get(i).getFormateur().getFirstName() + " " + formations.get(i).getFormateur().getLastName());
-
-                Label StarDate = (Label) loader.getNamespace().get("startDate");
-                StarDate.setText(formations.get(i).getStart_date().toString());
-
-
-                vbox.getChildren().add(xmlContent);
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-
         }
+
     }
 
 }
