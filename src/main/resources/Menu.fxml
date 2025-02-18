@@ -26,6 +26,7 @@
          <children>
           <Button mnemonicParsing="false" onAction="#redirectToGestionDesFormation" styleClass="menu-button" text="Gestion des formations" />
             <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#redirectToToutesLesFormations" styleClass="menu-button" text="Toutes Les formations" />
+            <Button layoutX="10.0" layoutY="50.0" mnemonicParsing="false" onAction="#redirectToMesFormations" styleClass="menu-button" text="Mes formations" />
          </children>
       </VBox>
     <Button layoutX="23.0" layoutY="592.0" mnemonicParsing="false" styleClass="menu-logout-btn" text="Logout">

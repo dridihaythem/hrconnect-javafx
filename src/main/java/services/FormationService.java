@@ -144,4 +144,34 @@ public class FormationService implements  Crud<Formation> {
         stmt.setInt(2, employe_id);
         stmt.executeUpdate();
     }
+
+    public List<Formation> getMesFormation(int employe_id) throws Exception {
+
+        String sql = "SELECT a.id, a.title, a.image, a.is_online, a.description, a.place, a.start_date, a.end_date, b.first_name, b.last_name FROM formations a JOIN formateurs b ON a.formateur_id = b.id WHERE a.id IN ( SELECT formation_id FROM formation_participation WHERE employe_id = 18 ) ORDER BY a.start_date DESC";
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        List<Formation> formations = new ArrayList<>();
+        while (rs.next()) {
+            Formation formation = new Formation();
+            formation.setId(rs.getInt("id"));
+            formation.setTitle(rs.getString("title"));
+            formation.setDescription(rs.getString("description"));
+            formation.setImage(rs.getString("image"));
+            formation.setIs_online(rs.getBoolean("is_online"));
+            formation.setPlace(rs.getString("place"));
+            formation.setStart_date(rs.getTimestamp("start_date"));
+            if(rs.getTimestamp("end_date") != null){
+                formation.setEnd_date(rs.getTimestamp("end_date"));
+            }else{
+                formation.setEnd_date(null);
+            }
+            Formateur formateur = new Formateur();
+            formateur.setFirstName(rs.getString("first_name"));
+            formateur.setLastName(rs.getString("last_name"));
+            formation.setFormateur(formateur);
+            formations.add(formation);
+        }
+        return formations;
+    }
+
 }
