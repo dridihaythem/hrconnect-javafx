@@ -1,13 +1,11 @@
 package services;
 
+import models.Employe;
 import models.Formateur;
 import models.Formation;
 import utils.MyDb;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -83,7 +81,7 @@ public class FormationService implements  Crud<Formation> {
 
     @Override
     public List<Formation> getAll() throws Exception {
-        String sql = "select * from formations ORDER BY id DESC";
+        String sql = "SELECT f.*, COUNT(p.employe_id) AS nb_participants FROM formations f LEFT JOIN formation_participation p ON f.id = p.formation_id GROUP BY f.id ORDER BY f.id DESC;";
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         List<Formation> formations = new ArrayList<>();
@@ -103,6 +101,7 @@ public class FormationService implements  Crud<Formation> {
             }else{
                 formation.setEnd_date(null);
             }
+            formation.setNb_participant(rs.getInt("nb_participants"));
             formations.add(formation);
         }
         return formations;
@@ -173,5 +172,23 @@ public class FormationService implements  Crud<Formation> {
         }
         return formations;
     }
+
+    public List<Employe> getFormationParticipants(int formation_id) throws SQLException {
+        String sql = "SELECT * FROM employe WHERE id IN (SELECT employe_id FROM formation_participation WHERE formation_id = ?) ORDER BY id DESC";
+        PreparedStatement  stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, formation_id);
+        ResultSet rs = stmt.executeQuery();
+        List<Employe> data = new ArrayList<>();
+        while (rs.next()) {
+            Employe emp = new Employe();
+            emp.setId(rs.getInt("id"));
+            emp.setNom(rs.getString("nom"));
+            emp.setPrenom(rs.getString("prenom"));
+            emp.setEmail(rs.getString("email"));
+            data.add(emp);
+        }
+        return data;
+    }
+
 
 }

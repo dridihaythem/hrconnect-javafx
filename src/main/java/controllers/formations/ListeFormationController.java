@@ -1,11 +1,9 @@
 package controllers.formations;
 
 import controllers.formations.quiz.ListeQuizController;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -43,10 +41,11 @@ public class ListeFormationController implements Initializable, ShowMenu {
         TableRow header = new TableRow(TableRowType.HEADER);
         header.addCell(new TableCell("ID",50));
         header.addCell(new TableCell("Titre",250));
-        header.addCell(new TableCell("Lieu", 140));
+        header.addCell(new TableCell("Lieu", 80));
         header.addCell(new TableCell("Disponible pour", 140));
         header.addCell(new TableCell("Date de début", 140));
         header.addCell(new TableCell("Date de fin", 140));
+        header.addCell(new TableCell("Participants", 100));
         header.addCell(new TableCell("?", 140));
 
 
@@ -66,7 +65,7 @@ public class ListeFormationController implements Initializable, ShowMenu {
 
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getId()),50));
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getTitle()),250));
-                    row.addCell(new TableCell(formations.get(i).isIs_online() ? "En ligne" : formations.get(i).getPlace(),140));
+                    row.addCell(new TableCell(formations.get(i).isIs_online() ? "En ligne" : formations.get(i).getPlace(),80));
 
                     String dispoPour = "";
                     if(formations.get(i).isAvailable_for_employee() && formations.get(i).isAvailable_for_intern()){
@@ -79,6 +78,23 @@ public class ListeFormationController implements Initializable, ShowMenu {
                     row.addCell(new TableCell(dispoPour,140));
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getStart_date()),140));
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getEnd_date()),140));
+                    row.addCell(new TableCell(String.valueOf(formations.get(i).getNb_participant()),100));
+
+                    row.addAction("USER","table-show-btn",()->{
+                        Parent root = null;
+                        try {
+                            FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/ListeParticipants.fxml"));
+                            root = loader.load();
+                            ListeParticipantsController controller = loader.getController();
+                            controller.setFormation(formations.get(finalI));
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                        vbox.getScene().setRoot(root);
+                    });
+
 
                     row.addAction("QUESTION","table-show-btn",()->{
                         Parent root = null;

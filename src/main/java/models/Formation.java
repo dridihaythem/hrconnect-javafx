@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Formation {
 
-    private int id,formateur_id;
+    private int id,formateur_id,nb_participant;
 
     private String image,title,description,place;
 
@@ -151,6 +151,14 @@ public class Formation {
 
     public void setFormateur(Formateur formateur) {
         this.formateur = formateur;
+    }
+
+    public int getNb_participant() {
+        return nb_participant;
+    }
+
+    public void setNb_participant(int nb_participant) {
+        this.nb_participant = nb_participant;
     }
 
     @Override
