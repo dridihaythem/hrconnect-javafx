@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1
--- Généré le : mar. 18 fév. 2025 à 10:04
+-- Généré le : mar. 18 fév. 2025 à 23:19
 -- Version du serveur : 10.4.32-MariaDB
 -- Version de PHP : 8.2.12
 
@@ -49,6 +49,15 @@ CREATE TABLE `candidat` (
                             `phone` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `candidat`
+--
+
+INSERT INTO `candidat` (`id`, `last_name`, `first_name`, `email`, `phone`) VALUES
+                                                                               (4, 'Aymen', 'Falten', 'aymen@gmail.com', '20123123'),
+                                                                               (5, 'Salim', 'Mejri', 'Salim@gmail.com', '20123124'),
+                                                                               (6, 'Salah', 'Mejri', 'salah@gmail.com', '20123125');
+
 -- --------------------------------------------------------
 
 --
@@ -61,6 +70,14 @@ CREATE TABLE `candidature` (
                                `offre_emploi_id` int(11) NOT NULL,
                                `cv` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `candidature`
+--
+
+INSERT INTO `candidature` (`id`, `candidat_id`, `offre_emploi_id`, `cv`) VALUES
+                                                                             (3, 4, 3, 'C:\\Users\\Haythem\\Downloads\\hrconnect-javafx\\cvs\\TP1-SQL-LDD.pdf'),
+                                                                             (4, 4, 4, 'C:\\Users\\Haythem\\Downloads\\hrconnect-javafx\\cvs\\TP1-SQL-LDD.pdf');
 
 -- --------------------------------------------------------
 
@@ -85,22 +102,22 @@ CREATE TABLE `demande_conge` (
 
 CREATE TABLE `employe` (
                            `id` int(11) NOT NULL,
-                           `cin` int(8) NOT NULL,
-                           `first_name` varchar(255) NOT NULL,
-                           `last_name` varchar(255) NOT NULL,
-                           `email` varchar(255) NOT NULL,
-                           `password` varchar(255) NOT NULL,
-                           `hiring_date` date NOT NULL,
-                           `solde_conges` int(11) NOT NULL DEFAULT 0
+                           `cin` int(8) DEFAULT NULL,
+                           `nom` varchar(255) NOT NULL,
+                           `prenom` varchar(255) NOT NULL,
+                           `email` varchar(255) DEFAULT NULL,
+                           `password` varchar(255) DEFAULT NULL,
+                           `hiring_date` date DEFAULT NULL,
+                           `soldeConges` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Déchargement des données de la table `employe`
 --
 
-INSERT INTO `employe` (`id`, `cin`, `first_name`, `last_name`, `email`, `password`, `hiring_date`, `solde_conges`) VALUES
-                                                                                                                       (1, 11415412, 'haythem', 'dridi', 'haithemdridiweb@gmail.com', 'haithemdridiweb@gmail.com', '0000-00-00', 0),
-                                                                                                                       (18, 0, 'Haythem', 'Haythem', 'haithemdridiweb@gmail.com', 'haithemdridiweb@gmail.com', '2025-02-18', 0);
+INSERT INTO `employe` (`id`, `cin`, `nom`, `prenom`, `email`, `password`, `hiring_date`, `soldeConges`) VALUES
+                                                                                                            (1, 0, 'haythem', 'dridi', 'haithemdridiweb@gmail.com', 'haithemdridiweb@gmail.com', '0000-00-00', 0),
+                                                                                                            (18, 0, 'Haythem', 'Haythem', 'haithemdridiweb@gmail.com', 'haithemdridiweb@gmail.com', '2025-02-18', 0);
 
 -- --------------------------------------------------------
 
@@ -121,7 +138,9 @@ CREATE TABLE `formateurs` (
 --
 
 INSERT INTO `formateurs` (`id`, `first_name`, `last_name`, `email`, `password`) VALUES
-    (1, 'Haythem', 'Dridi', 'haythem@gmail.com', 'haythem@gmail.com');
+                                                                                    (2, 'Haythem', 'Dridi', 'haithemdridiweb@gmail.com', 'haithemdridiweb@gmail.com'),
+                                                                                    (3, 'Amine', 'Raisi', 'amine@gmail.com', 'amine@gmail.com'),
+                                                                                    (4, 'Ala', 'Ben Terdayt', 'ala@gmail.com', 'ala');
 
 -- --------------------------------------------------------
 
@@ -148,9 +167,7 @@ CREATE TABLE `formations` (
 --
 
 INSERT INTO `formations` (`id`, `formateur_id`, `title`, `image`, `description`, `is_online`, `place`, `available_for_employee`, `available_for_intern`, `start_date`, `end_date`) VALUES
-                                                                                                                                                                                       (23, 1, 'formation java5', 'C:\\Users\\Haythem\\Desktop\\profile.jpg', 'ok formation 2', 0, 'tunis', 1, 1, '2025-02-20 08:34:40', NULL),
-                                                                                                                                                                                       (24, 1, 'xxx', 'C:\\Users\\Haythem\\Desktop\\attestation _prsence.jpg', 'xxx', 0, 'xxx', 1, 1, '2025-02-18 22:30:19', NULL),
-                                                                                                                                                                                       (25, 1, 'miaia', 'C:\\Users\\Haythem\\Desktop\\exemple sprint backlog.png', 'mam', 0, 'aama', 1, 1, '2025-02-19 09:42:43', NULL);
+    (31, 2, 'Formation JavaFx', 'C:\\Users\\Haythem\\Downloads\\photos\\javafx-formation.jpg', 'Formation JavaFx', 1, '', 1, 1, '2025-02-20 22:54:37', '2025-02-21 22:54:37');
 
 -- --------------------------------------------------------
 
@@ -162,15 +179,6 @@ CREATE TABLE `formation_participation` (
                                            `formation_id` int(11) NOT NULL,
                                            `employe_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Déchargement des données de la table `formation_participation`
---
-
-INSERT INTO `formation_participation` (`formation_id`, `employe_id`) VALUES
-                                                                         (25, 18),
-                                                                         (24, 18),
-                                                                         (23, 18);
 
 -- --------------------------------------------------------
 
@@ -199,6 +207,16 @@ CREATE TABLE `offre_emploi` (
                                 `location` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Déchargement des données de la table `offre_emploi`
+--
+
+INSERT INTO `offre_emploi` (`id`, `title`, `description`, `location`) VALUES
+                                                                          (3, 'Développeur Java Senior', 'Nous recherchons un Développeur Java Senior pour rejoindre notreéquipe dynamique à Paris. Le candidat idéal aura une solide expérience endéveloppement Java et sera capable de travailler sur des projets complexes. Vousserez responsable de la conception, du développement et de la maintenance de nosapplications Java. Vous travaillerez en étroite collaboration avec les équipes deproduit et de conception pour créer des solutions innovantes. Vous devez avoir unebonne compréhension des frameworks Java tels que Spring et Hibernate, ainsi quedes bases de données relationnelles. Une expérience avec les microservices et lesarchitectures cloud est un plus. Vous serez également impliqué dans la revue decode et la formation des développeurs juniors. Nous offrons un environnement detravail stimulant avec des opportunités de croissance et de développementprofessionnel. Si vous êtes passionné par le développement Java et que vouscherchez à relever de nouveaux défis, nous aimerions vous rencontrer.', 'Paris, France'),
+                                                                          (4, 'Chef de Projet IT', 'Nous sommes à la recherche d&#39;un Chef de Projet IT pour diriger nosprojets technologiques à Lyon. Le candidat idéal aura une expérience avérée dans lagestion de projets IT, de la planification à l&#39;exécution. Vous serez responsable de lacoordination des équipes de développement, de la gestion des budgets et des délais,et de la communication avec les parties prenantes. Vous devez avoir une bonnecompréhension des méthodologies de gestion de projet telles que Agile et Scrum.Une expérience dans le secteur des technologies de l&#39;information est essentielle.Vous serez également responsable de l&#39;identification des risques et de la mise enplace de plans d&#39;atténuation. Nous offrons un environnement de travail collaboratifavec des opportunités de développement professionnel. Si vous êtes un leadernaturel avec une passion pour la technologie, nous aimerions vous rencontrer.', 'Lyon, France'),
+                                                                          (5, 'Ingénieur DevOps', 'Nous recherchons un Ingénieur DevOps pour rejoindre notre équipe àToulouse. Le candidat idéal aura une solide expérience en développement et enopérations, avec une expertise en automatisation et en intégration continue. Vousserez responsable de la mise en place et de la gestion de pipelines CI/CD, de lasurveillance des systèmes et de la résolution des problèmes de performance. Vousdevez avoir une bonne compréhension des outils DevOps tels que Jenkins, Dockeret Kubernetes. Une expérience avec les services cloud tels que AWS ou Azure estun plus. Vous travaillerez en étroite collaboration avec les équipes de développementpour assurer une livraison continue et de haute qualité des applications. Nous offrons un environnement de travail dynamique avec des opportunités de croissance et dedéveloppement professionnel. Si vous êtes passionné par l&#39;automatisation etl&#39;amélioration des processus, nous aimerions vous rencontrer.', 'Toulouse, France'),
+                                                                          (6, 'Analyste de Données', 'Nous sommes à la recherche d&#39;un Analyste de Données pour rejoindrenotre équipe à Marseille. Le candidat idéal aura une solide expérience en analyse dedonnées et sera capable de transformer des données brutes en informationsexploitables. Vous serez responsable de la collecte, de l&#39;analyse et de l&#39;interprétationdes données pour aider à la prise de décision stratégique. Vous devez avoir unebonne compréhension des outils d&#39;analyse de données tels que SQL, Python et R.Une expérience avec les plateformes de visualisation de données telles que Tableauou Power BI est un plus. Vous travaillerez en étroite collaboration avec les équipesde produit et de marketing pour identifier les tendances et les opportunités. Nousoffrons un environnement de travail stimulant avec des opportunités dedéveloppement professionnel. Si vous êtes passionné par les données et que vouscherchez à avoir un impact, nous aimerions vous rencontrer.', 'Marseille, France');
+
 -- --------------------------------------------------------
 
 --
@@ -209,10 +227,33 @@ CREATE TABLE `quiz` (
                         `id` int(11) NOT NULL,
                         `formation_id` int(11) NOT NULL,
                         `question` varchar(255) NOT NULL,
-                        `type` enum('SINGLE','MULTIPLE') NOT NULL,
                         `reponse1` varchar(255) NOT NULL,
                         `reponse2` varchar(255) DEFAULT NULL,
-                        `reponse3` varchar(255) DEFAULT NULL
+                        `reponse3` varchar(255) DEFAULT NULL,
+                        `num_reponse_correct` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Déchargement des données de la table `quiz`
+--
+
+INSERT INTO `quiz` (`id`, `formation_id`, `question`, `reponse1`, `reponse2`, `reponse3`, `num_reponse_correct`) VALUES
+                                                                                                                     (16, 31, 'Quelle classe est utilisée pour créer une fenêtre en JavaFX ?', 'JFrame', 'Stage', 'Window', 2),
+                                                                                                                     (17, 31, 'Quel est le langage utilisé pour styliser une interface JavaFX ?', 'CSS', 'XML', 'JavaScript', 1),
+                                                                                                                     (18, 31, 'Quelle méthode est utilisée pour lancer une application JavaFX ?', 'launch', 'start', 'run', 1),
+                                                                                                                     (19, 31, 'Quel conteneur est utilisé pour organiser les éléments en colonne dans JavaFX ?', 'VBox ', 'HBox', 'GridPane', 1),
+                                                                                                                     (20, 31, 'Quel événement est utilisé pour détecter un clic sur un bouton JavaFX ?', 'setOnAction', 'setOnClick', 'setOnPress', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `quiz_reponses`
+--
+
+CREATE TABLE `quiz_reponses` (
+                                 `employe_id` int(11) NOT NULL,
+                                 `quiz_id` int(11) NOT NULL,
+                                 `num_reponse` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -324,6 +365,13 @@ ALTER TABLE `quiz`
   ADD KEY `fk_quiz_formation` (`formation_id`);
 
 --
+-- Index pour la table `quiz_reponses`
+--
+ALTER TABLE `quiz_reponses`
+    ADD KEY `fk_quiz_reponses_employe` (`employe_id`),
+  ADD KEY `fk_quiz_reponses_quiz` (`quiz_id`);
+
+--
 -- Index pour la table `stagaires`
 --
 ALTER TABLE `stagaires`
@@ -350,37 +398,37 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT pour la table `candidat`
 --
 ALTER TABLE `candidat`
-    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT pour la table `candidature`
 --
 ALTER TABLE `candidature`
-    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `demande_conge`
 --
 ALTER TABLE `demande_conge`
-    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT pour la table `employe`
 --
 ALTER TABLE `employe`
-    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT pour la table `formateurs`
 --
 ALTER TABLE `formateurs`
-    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT pour la table `formations`
 --
 ALTER TABLE `formations`
-    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT pour la table `hr`
@@ -392,13 +440,13 @@ ALTER TABLE `hr`
 -- AUTO_INCREMENT pour la table `offre_emploi`
 --
 ALTER TABLE `offre_emploi`
-    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT pour la table `quiz`
 --
 ALTER TABLE `quiz`
-    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+    MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT pour la table `stagaires`
@@ -447,6 +495,13 @@ ALTER TABLE `formation_participation`
 --
 ALTER TABLE `quiz`
     ADD CONSTRAINT `fk_quiz_formation` FOREIGN KEY (`formation_id`) REFERENCES `formations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Contraintes pour la table `quiz_reponses`
+--
+ALTER TABLE `quiz_reponses`
+    ADD CONSTRAINT `fk_quiz_reponses_employe` FOREIGN KEY (`employe_id`) REFERENCES `employe` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_quiz_reponses_quiz` FOREIGN KEY (`quiz_id`) REFERENCES `quiz` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Contraintes pour la table `valider_conge`
