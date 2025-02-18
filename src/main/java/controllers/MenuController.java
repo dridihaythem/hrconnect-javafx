@@ -22,4 +22,16 @@ public class MenuController {
         menu.getScene().setRoot(root);
     }
 
+    @FXML
+    void redirectToToutesLesFormations() {
+        Parent root = null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/ToutesLesFormations.fxml"));
+            root = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        menu.getScene().setRoot(root);
+    }
+
 }

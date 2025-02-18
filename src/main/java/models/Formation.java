@@ -12,6 +12,8 @@ public class Formation {
 
     private Date start_date,end_date;
 
+    private Formateur formateur;
+
 
     public Formation() {
     }
@@ -141,6 +143,14 @@ public class Formation {
 
     public void setEnd_date(Date end_date) {
         this.end_date = end_date;
+    }
+
+    public Formateur getFormateur() {
+        return formateur;
+    }
+
+    public void setFormateur(Formateur formateur) {
+        this.formateur = formateur;
     }
 
     @Override

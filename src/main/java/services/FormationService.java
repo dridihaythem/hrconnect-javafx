@@ -1,5 +1,6 @@
 package services;
 
+import models.Formateur;
 import models.Formation;
 import utils.MyDb;
 
@@ -102,6 +103,36 @@ public class FormationService implements  Crud<Formation> {
             }else{
                 formation.setEnd_date(null);
             }
+            formations.add(formation);
+        }
+        return formations;
+    }
+
+    public List<Formation> getAllFormationsForUser() throws Exception {
+        String sql = "select a.id,a.title,a.image,a.is_online,a.description,a.place,a.start_date,a.end_date,b.first_name,b.last_name from formations a , formateurs b \n" +
+                "WHERE a.formateur_id = b.id\n" +
+                "ORDER BY id DESC";
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        List<Formation> formations = new ArrayList<>();
+        while (rs.next()) {
+            Formation formation = new Formation();
+            formation.setId(rs.getInt("id"));
+            formation.setTitle(rs.getString("title"));
+            formation.setDescription(rs.getString("description"));
+            formation.setImage(rs.getString("image"));
+            formation.setIs_online(rs.getBoolean("is_online"));
+            formation.setPlace(rs.getString("place"));
+            formation.setStart_date(rs.getTimestamp("start_date"));
+            if(rs.getTimestamp("end_date") != null){
+                formation.setEnd_date(rs.getTimestamp("end_date"));
+            }else{
+                formation.setEnd_date(null);
+            }
+            Formateur formateur = new Formateur();
+            formateur.setFirstName(rs.getString("first_name"));
+            formateur.setLastName(rs.getString("last_name"));
+            formation.setFormateur(formateur);
             formations.add(formation);
         }
         return formations;
