@@ -79,6 +79,10 @@ public class ModifierQuizController implements Initializable, ShowMenu  {
                 throw new InvalidInputException("Le titre est requis");
             } else if (reponse1.getText().isEmpty() || reponse2.getText().isEmpty() || reponse3.getText().isEmpty()) {
                 throw new InvalidInputException("Ajouter 3 reponses");
+            }else if(reponse1.getText().equals(reponse2.getText()) || reponse1.getText().equals(reponse3.getText()) || reponse2.getText().equals(reponse3.getText())){
+                throw new InvalidInputException("Les réponses ne peuvent pas être identiques");
+            }else if(!isRep1Correct.isSelected() && !isRep2Correct.isSelected() && !isRep3Correct.isSelected()){
+                throw new InvalidInputException("Choisissez la bonne réponse");
             }
 
 
