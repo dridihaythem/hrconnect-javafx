@@ -1,5 +1,7 @@
 package services;
 
+import models.Employe;
+
 import java.util.List;
 
 
@@ -13,4 +15,5 @@ public interface Crud<T> {
 
     List<T> getAll() throws Exception;
 
+    T getEmployeById(int id) throws Exception;
 }
