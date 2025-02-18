@@ -72,12 +72,11 @@ public class ListeQuizController implements Initializable,ShowMenu {
         if(formation != null) {
             TableRow header = new TableRow(TableRowType.HEADER);
             header.addCell(new TableCell("ID", 50));
-            header.addCell(new TableCell("Question", 250));
-            header.addCell(new TableCell("Type", 140));
-            header.addCell(new TableCell("Response 1", 140));
-            header.addCell(new TableCell("Response 2", 140));
-            header.addCell(new TableCell("Response 3", 140));
-            header.addCell(new TableCell("?", 140));
+            header.addCell(new TableCell("Question", 300));
+            header.addCell(new TableCell("Response 1", 150));
+            header.addCell(new TableCell("Response 2", 150));
+            header.addCell(new TableCell("Response 3", 150));
+            header.addCell(new TableCell("?", 150));
 
 
             vbox.getChildren().add(header.build());
@@ -95,17 +94,11 @@ public class ListeQuizController implements Initializable,ShowMenu {
                         TableRow row = new TableRow(TableRowType.BODY);
 
                         row.addCell(new TableCell(String.valueOf(quizs.get(i).getId()), 50));
-                        row.addCell(new TableCell(String.valueOf(quizs.get(i).getQuestion()), 250));
-                        String type;
-                        if (quizs.get(i).getType() == QuizType.SINGLE) {
-                            type = "Choix unique";
-                        } else {
-                            type = "Choix multiple";
-                        }
-                        row.addCell(new TableCell(String.valueOf(type), 140));
-                        row.addCell(new TableCell(String.valueOf(quizs.get(i).getReponse1()), 140));
-                        row.addCell(new TableCell(String.valueOf(quizs.get(i).getReponse2()), 140));
-                        row.addCell(new TableCell(String.valueOf(quizs.get(i).getReponse3()), 140));
+                        row.addCell(new TableCell(String.valueOf(quizs.get(i).getQuestion()), 300));
+
+                        row.addCell(new TableCell(String.valueOf(quizs.get(i).getReponse1()), 150));
+                        row.addCell(new TableCell(String.valueOf(quizs.get(i).getReponse2()), 150));
+                        row.addCell(new TableCell(String.valueOf(quizs.get(i).getReponse3()), 150));
 
 
                         row.addAction("EDIT", "table-edit-btn", () -> {

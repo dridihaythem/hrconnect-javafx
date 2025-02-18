@@ -1,5 +1,7 @@
 package controllers.formations;
 
+import controllers.formations.quiz.FormationQuiz;
+import controllers.formations.quiz.ListeQuizController;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -85,21 +87,15 @@ public class MesFormationController implements Initializable, ShowMenu {
 
                     MFXButton inscrireButton = (MFXButton) loader.getNamespace().get("inscrireBtn");
                     inscrireButton.setOnAction(event -> {
+                        Parent root = null;
                         try {
-                            fs.participerFormation(formation.getId(),18);
-
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                            alert.setTitle("Inscription");
-                            alert.setHeaderText("Inscription réussie");
-                            alert.setContentText("Vous êtes inscrit à la formation " + formation.getTitle());
-                            alert.showAndWait();
-
-                            vbox.getChildren().clear();
-                            initialize(location, resources);
-
-
+                            FXMLLoader loader1 = new FXMLLoader(getClass().getResource("/formations/quiz/FormationQuiz.fxml"));
+                            root = loader1.load();
+                            FormationQuiz controller = loader1.getController();
+                            controller.setFormation(formation);
+                            vbox.getScene().setRoot(root);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            throw new RuntimeException(e);
                         }
                     });
 

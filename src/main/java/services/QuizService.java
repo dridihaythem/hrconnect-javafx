@@ -22,42 +22,26 @@ public class QuizService implements Crud<Quiz> {
 
     @Override
     public void create(Quiz obj) throws Exception {
-        String sql = "insert into quiz (formation_id,question,type,reponse1,reponse2,reponse3) VALUES (?,?,?,?,?,?)";
+        String sql = "insert into quiz (formation_id,question,reponse1,reponse2,reponse3,num_reponse_correct) VALUES (?,?,?,?,?,?)";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1,obj.getFormation_id());
         stmt.setString(2, obj.getQuestion());
-        stmt.setString(3, obj.getType().toString());
-        stmt.setString(4, obj.getReponse1());
-        if(obj.getReponse2().isEmpty() || obj.getReponse2().isBlank()){
-            stmt.setString(5, null);
-        }else{
-            stmt.setString(5, obj.getReponse2());
-        }
-        if(obj.getReponse3().isEmpty() || obj.getReponse3().isBlank()){
-            stmt.setString(6, null);
-        }else{
-            stmt.setString(6, obj.getReponse3());
-        }
+        stmt.setString(3, obj.getReponse1());
+        stmt.setString(4, obj.getReponse2());
+        stmt.setString(5, obj.getReponse3());
+        stmt.setInt(6, obj.getNumRepCorrect());
         stmt.executeUpdate();
     }
 
     @Override
     public void update(Quiz obj) throws Exception {
-        String sql = "update  quiz set question = ? , type = ? , reponse1 = ? , reponse2 = ? , reponse3 = ? where id = ?";
+        String sql = "update  quiz set question = ? , reponse1 = ? , reponse2 = ? , reponse3 = ? , num_reponse_correct = ? where id = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1, obj.getQuestion());
-        stmt.setString(2, obj.getType().toString());
-        stmt.setString(3, obj.getReponse1());
-        if(obj.getReponse2().isEmpty() || obj.getReponse2().isBlank()){
-            stmt.setString(4, null);
-        }else{
-            stmt.setString(4, obj.getReponse2());
-        }
-        if(obj.getReponse3().isEmpty() || obj.getReponse3().isBlank()){
-            stmt.setString(5, null);
-        }else{
-            stmt.setString(5, obj.getReponse3());
-        }
+        stmt.setString(2, obj.getReponse1());
+        stmt.setString(3, obj.getReponse2());
+        stmt.setString(4, obj.getReponse3());
+        stmt.setInt(5, obj.getNumRepCorrect());
         stmt.setInt(6,obj.getId());
         stmt.executeUpdate();
     }
@@ -84,10 +68,10 @@ public class QuizService implements Crud<Quiz> {
             Quiz quiz = new Quiz();
             quiz.setId(rs.getInt("id"));
             quiz.setQuestion(rs.getString("question"));
-            quiz.setType(QuizType.valueOf(rs.getString("type")));
             quiz.setReponse1(rs.getString("reponse1"));
             quiz.setReponse2(rs.getString("reponse2"));
             quiz.setReponse3(rs.getString("reponse3"));
+            quiz.setNumRepCorrect(rs.getInt("num_reponse_correct"));
             quizs.add(quiz);
         }
         return quizs;
@@ -103,12 +87,21 @@ public class QuizService implements Crud<Quiz> {
             Quiz quiz = new Quiz();
             quiz.setId(rs.getInt("id"));
             quiz.setQuestion(rs.getString("question"));
-            quiz.setType(QuizType.valueOf(rs.getString("type")));
             quiz.setReponse1(rs.getString("reponse1"));
             quiz.setReponse2(rs.getString("reponse2"));
             quiz.setReponse3(rs.getString("reponse3"));
+            quiz.setNumRepCorrect(rs.getInt("num_reponse_correct"));
             quizs.add(quiz);
         }
         return quizs;
+    }
+
+    public void enregisterReponse(int employe_id,int quiz_id,int num_reponse) throws Exception {
+        String sql = "insert into quiz_reponses (employe_id,quiz_id,num_reponse) VALUES (?,?,?)";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1,employe_id);
+        stmt.setInt(2,quiz_id);
+        stmt.setInt(3,num_reponse);
+        stmt.executeUpdate();
     }
 }

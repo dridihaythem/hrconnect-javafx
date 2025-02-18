@@ -3,31 +3,30 @@ package models;
 import utils.enums.QuizType;
 
 public class Quiz {
-    int id,formation_id;
-    QuizType type;
+    int id,formation_id,numRepCorrect;
     String question,reponse1,reponse2,reponse3;
 
     public  Quiz(){
 
     }
 
-    public Quiz(int formation_id, QuizType type, String question, String reponse1, String reponse2, String reponse3) {
+    public Quiz(int formation_id,String question, String reponse1, String reponse2, String reponse3,int numRepCorrect) {
         this.formation_id = formation_id;
-        this.type = type;
         this.question = question;
         this.reponse1 = reponse1;
         this.reponse2 = reponse2;
         this.reponse3 = reponse3;
+        this.numRepCorrect = numRepCorrect;
     }
 
-    public Quiz(int id, int formation_id, QuizType type, String question, String reponse1, String reponse2, String reponse3) {
+    public Quiz(int id, int formation_id, QuizType type, String question, String reponse1, String reponse2, String reponse3,int numRepCorrect) {
         this.id = id;
         this.formation_id = formation_id;
-        this.type = type;
         this.question = question;
         this.reponse1 = reponse1;
         this.reponse2 = reponse2;
         this.reponse3 = reponse3;
+        this.numRepCorrect = numRepCorrect;
     }
 
     public int getId() {
@@ -44,14 +43,6 @@ public class Quiz {
 
     public void setFormation_id(int formation_id) {
         this.formation_id = formation_id;
-    }
-
-    public QuizType getType() {
-        return type;
-    }
-
-    public void setType(QuizType type) {
-        this.type = type;
     }
 
     public String getQuestion() {
@@ -86,12 +77,19 @@ public class Quiz {
         this.reponse3 = reponse3;
     }
 
+    public int getNumRepCorrect() {
+        return numRepCorrect;
+    }
+
+    public void setNumRepCorrect(int numRepCorrect) {
+        this.numRepCorrect = numRepCorrect;
+    }
+
     @Override
     public String toString() {
         return "Quiz{" +
                 "id=" + id +
                 ", formation_id=" + formation_id +
-                ", type=" + type +
                 ", question='" + question + '\'' +
                 ", reponse1='" + reponse1 + '\'' +
                 ", reponse2='" + reponse2 + '\'' +

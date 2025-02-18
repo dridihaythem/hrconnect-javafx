@@ -18,7 +18,7 @@ public class Main {
         MyDb db = MyDb.getInstance();
 
         QuizService qs = new QuizService();
-        qs.create(new Quiz(1,  QuizType.SINGLE,"question", "reponse1", "reponse2", "reponse3"));
+        //qs.create(new Quiz(1,  QuizType.SINGLE,"question", "reponse1", "reponse2", "reponse3"));
 
        /* FormationService fs = new FormationService();
 

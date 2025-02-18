@@ -4,6 +4,7 @@ import exceptions.InvalidInputException;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXRadioButton;
 import io.github.palexdev.materialfx.controls.MFXTextField;
+import io.github.palexdev.materialfx.controls.MFXToggleButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -47,13 +48,14 @@ public class ModifierQuizController implements Initializable, ShowMenu  {
     private MFXTextField title;
 
     @FXML
-    private MFXRadioButton ChoixMultiple;
+    private MFXToggleButton isRep1Correct;
 
     @FXML
-    private ToggleGroup QuestionType;
+    private MFXToggleButton isRep2Correct;
 
     @FXML
-    private MFXRadioButton SimpleChoix;
+    private MFXToggleButton isRep3Correct;
+
 
 
     @FXML
@@ -75,8 +77,8 @@ public class ModifierQuizController implements Initializable, ShowMenu  {
         try {
             if (title.getText().isEmpty()) {
                 throw new InvalidInputException("Le titre est requis");
-            } else if (reponse1.getText().isEmpty()) {
-                throw new InvalidInputException("Ajouter au mois une reponse possible");
+            } else if (reponse1.getText().isEmpty() || reponse2.getText().isEmpty() || reponse3.getText().isEmpty()) {
+                throw new InvalidInputException("Ajouter 3 reponses");
             }
 
 
@@ -85,11 +87,17 @@ public class ModifierQuizController implements Initializable, ShowMenu  {
             quiz.setReponse2(reponse2.getText());
             quiz.setReponse3(reponse3.getText());
 
-            if (ChoixMultiple.isSelected()) {
-                quiz.setType(QuizType.MULTIPLE);
-            } else {
-                quiz.setType(QuizType.SINGLE);
+
+            int numRepCorrect = 0;
+            if (isRep1Correct.isSelected()) {
+                numRepCorrect = 1;
+            } else if (isRep2Correct.isSelected()) {
+                numRepCorrect = 2;
+            } else if (isRep3Correct.isSelected()) {
+                numRepCorrect = 3;
             }
+
+            quiz.setNumRepCorrect(numRepCorrect);
 
             qs.update(quiz);
 
@@ -135,6 +143,25 @@ public class ModifierQuizController implements Initializable, ShowMenu  {
 
     public void initialize(URL location, ResourceBundle resources) {
         initializeMenu(menu);
+
+        isRep1Correct.setOnAction(e -> {
+            if (isRep1Correct.isSelected()) {
+                isRep2Correct.setSelected(false);
+                isRep3Correct.setSelected(false);
+            }
+        });
+        isRep2Correct.setOnAction(e -> {
+            if (isRep2Correct.isSelected()) {
+                isRep1Correct.setSelected(false);
+                isRep3Correct.setSelected(false);
+            }
+        });
+        isRep3Correct.setOnAction(e -> {
+            if (isRep3Correct.isSelected()) {
+                isRep1Correct.setSelected(false);
+                isRep2Correct.setSelected(false);
+            }
+        });
     }
 
     public void setData(Formation formation,Quiz quiz) throws SQLException {
@@ -146,13 +173,14 @@ public class ModifierQuizController implements Initializable, ShowMenu  {
         reponse2.setText(quiz.getReponse2());
         reponse3.setText(quiz.getReponse3());
 
-        if(quiz.getType().equals(QuizType.MULTIPLE)) {
-            ChoixMultiple.setSelected(true);
-            SimpleChoix.setSelected(false);
+        if(quiz.getNumRepCorrect() == 1){
+            isRep1Correct.setSelected(true);
+        }else if(quiz.getNumRepCorrect() == 2) {
+            isRep2Correct.setSelected(true);
         }else{
-            SimpleChoix.setSelected(true);
-            ChoixMultiple.setSelected(false);
+            isRep3Correct.setSelected(true);
         }
+
 
     }
 
