@@ -1,5 +1,7 @@
 package controllers.formations.quiz;
 
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +23,7 @@ import utils.enums.QuizType;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -38,11 +41,13 @@ public class FormationQuiz implements Initializable, ShowMenu {
 
     int currentQuizIndex = 0;
 
+    List<Boolean> reponsesResultats = new ArrayList<>();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeMenu(menu);
 
-        vbox.setSpacing(10);
+        vbox.setSpacing(20);
 
         if(formation != null){
             try {
@@ -51,6 +56,39 @@ public class FormationQuiz implements Initializable, ShowMenu {
                     Label label = new Label("Vous avez terminé le quiz");
                     label.setFont(new Font(20));
                     vbox.getChildren().add(label);
+
+                    int score = 0;
+                    for (Boolean reponseResultat : reponsesResultats) {
+                        if(reponseResultat){
+                            score++;
+                        }
+                    }
+
+                    boolean passed = score >= (quizzes.size() +1) / 2;
+
+
+                    FontAwesomeIconView icon = new FontAwesomeIconView();
+                    icon.setGlyphName(passed ? FontAwesomeIcon.CHECK_CIRCLE.name() : FontAwesomeIcon.TIMES_CIRCLE.name());
+                    icon.setSize("200");
+                    icon.setFill(passed ? javafx.scene.paint.Color.GREEN : javafx.scene.paint.Color.RED);
+
+                    vbox.getChildren().add(icon);
+
+                    Label scoreLabel = new Label("Votre score est : " + score + "/" + quizzes.size());
+                    scoreLabel.setFont(new Font(40));
+
+
+                    if(passed) {
+                        scoreLabel.setStyle("-fx-text-fill: green");
+                    }else{
+                        scoreLabel.setStyle("-fx-text-fill: red");
+                    }
+
+                    vbox.getChildren().add(scoreLabel);
+
+                    vbox.setAlignment(javafx.geometry.Pos.CENTER);
+
+
                 }else{
 
                     Quiz quiz = quizzes.get(currentQuizIndex);
@@ -75,6 +113,7 @@ public class FormationQuiz implements Initializable, ShowMenu {
 
                     MFXButton next = new MFXButton("Suivant");
                     next.setMinWidth(200);
+                    next.getStyleClass().add("save-btn");
                     vbox.getChildren().add(next);
 
                     next.setOnAction(event -> {
@@ -92,6 +131,12 @@ public class FormationQuiz implements Initializable, ShowMenu {
                             numReponseChoisie = 2;
                         }else{
                             numReponseChoisie = 3;
+                        }
+
+                        if(numReponseChoisie == quiz.getNumRepCorrect()) {
+                            reponsesResultats.add(true);
+                        }else{
+                            reponsesResultats.add(false);
                         }
 
                         try {

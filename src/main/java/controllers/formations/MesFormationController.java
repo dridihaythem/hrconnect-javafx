@@ -86,7 +86,17 @@ public class MesFormationController implements Initializable, ShowMenu {
                     StarDate.setText(formation.getStart_date().toString());
 
                     MFXButton inscrireButton = (MFXButton) loader.getNamespace().get("inscrireBtn");
+
+                    inscrireButton.setText("Passer le quiz");
                     inscrireButton.setOnAction(event -> {
+                        if(!formation.isHas_quiz()){
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Information Dialog");
+                            alert.setHeaderText(null);
+                            alert.setContentText("Cette formation n'a pas de quiz");
+                            alert.showAndWait();
+                            return;
+                        }
                         Parent root = null;
                         try {
                             FXMLLoader loader1 = new FXMLLoader(getClass().getResource("/formations/quiz/FormationQuiz.fxml"));

@@ -8,7 +8,7 @@ public class Formation {
 
     private String image,title,description,place;
 
-    private boolean is_online , available_for_employee , available_for_intern;
+    private boolean is_online , available_for_employee , available_for_intern,has_quiz;
 
     private Date start_date,end_date;
 
@@ -159,6 +159,14 @@ public class Formation {
 
     public void setNb_participant(int nb_participant) {
         this.nb_participant = nb_participant;
+    }
+
+    public boolean isHas_quiz() {
+        return has_quiz;
+    }
+
+    public void setHas_quiz(boolean has_quiz) {
+        this.has_quiz = has_quiz;
     }
 
     @Override
