@@ -13,6 +13,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
+import javafx.scene.image.ImageView;
 import jfxtras.scene.control.CalendarTextField;
 import models.Formateur;
 import models.Formation;
@@ -20,6 +22,7 @@ import services.FormateurService;
 import services.FormationService;
 import utils.ShowMenu;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
@@ -62,13 +65,23 @@ public class AjouterFormationController implements ShowMenu, Initializable {
     @FXML
     private MFXToggleButton typeFormation;
 
+    @FXML
+    private MFXButton chooseImage;
+
+    @FXML
+    private ImageView imageView;
+
     FormationService fs = new FormationService();
+
+    String imagePath;
 
     @FXML
     void onSave(ActionEvent event) {
 
         try {
-            if (title.getText().isEmpty()) {
+            if(imagePath == null){
+                throw new InvalidInputException("Choisir une image pour la formation");
+            } else if (title.getText().isEmpty()) {
                 throw new InvalidInputException("Le titre est requis");
             } else if (description.getText().isEmpty()) {
                 throw new InvalidInputException("La description est requise");
@@ -86,7 +99,7 @@ public class AjouterFormationController implements ShowMenu, Initializable {
 
             Formation formation = new Formation(
                     formateur.getValue().getId(),
-                    "image",
+                   imagePath,
                     title.getText(),
                     description.getText(),
                     emplacement.getText(),
@@ -135,6 +148,26 @@ public class AjouterFormationController implements ShowMenu, Initializable {
             alert.showAndWait();
         }
 
+    }
+
+    @FXML
+    void ChooseImage() {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choisir une image");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+        );
+
+        try {
+            File selectedFile = fileChooser.showOpenDialog(chooseImage.getScene().getWindow());
+            imagePath = selectedFile.getAbsolutePath();
+            imageView.setImage(new javafx.scene.image.Image(selectedFile.toURI().toString()));
+        } catch (Exception e) {
+            System.out.println(e);
+            imagePath = null;
+            imageView.setImage(null);
+        }
     }
 
     @Override

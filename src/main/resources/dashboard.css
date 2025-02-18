@@ -26,7 +26,7 @@
 }
 
 
-.save-btn , .cancel-btn{
+.save-btn , .cancel-btn , .secondary-btn{
     -fx-font-weight: bold;
     -fx-min-width: 200;
     -fx-padding: 15;
@@ -40,6 +40,13 @@
 .cancel-btn{
     -fx-text-fill: #fff !important;
     -fx-background-color: linear-gradient(to right, #ccc, #ccc) !important;
+}
+
+
+.secondary-btn{
+    -fx-text-fill: #fff !important;
+    -fx-background-color: linear-gradient(to right, #3a3f58, #3b866b) !important;
+    -fx-opacity: 0.9;
 }
 
 

@@ -11,7 +11,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import jfxtras.scene.control.CalendarTextField;
 import models.Formateur;
 import models.Formation;
@@ -19,6 +21,7 @@ import services.FormateurService;
 import services.FormationService;
 import utils.ShowMenu;
 
+import java.io.File;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.*;
@@ -68,6 +71,14 @@ public class ModifierFormationController implements Initializable, ShowMenu {
     FormateurService formateurService = new FormateurService();
 
     @FXML
+    private MFXButton chooseImage;
+
+    @FXML
+    private ImageView imageView;
+
+    String imagePath;
+
+    @FXML
     void onSave(ActionEvent event) {
 
         System.out.println(emplacement.getText());
@@ -87,7 +98,7 @@ public class ModifierFormationController implements Initializable, ShowMenu {
                 throw new InvalidInputException("Choisir au moins une catégorie de personnes");
             }
 
-
+            formation.setImage(imagePath);
             formation.setTitle(title.getText());
             formation.setDescription(description.getText());
             formation.setFormateur_id(formateur.getValue().getId());
@@ -141,6 +152,24 @@ public class ModifierFormationController implements Initializable, ShowMenu {
             alert.showAndWait();
         }
 
+    }
+
+    @FXML
+    void ChooseImage() {
+
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choisir une image");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+        );
+
+        try {
+            File selectedFile = fileChooser.showOpenDialog(chooseImage.getScene().getWindow());
+            imagePath = selectedFile.getAbsolutePath();
+            imageView.setImage(new javafx.scene.image.Image(selectedFile.toURI().toString()));
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     @Override
@@ -205,6 +234,12 @@ public class ModifierFormationController implements Initializable, ShowMenu {
         pourEmployes.setSelected(formation.isAvailable_for_employee());
         pourStagaires.setSelected(formation.isAvailable_for_intern());
         emplacement.setDisable(formation.isIs_online());
+
+
+        imagePath = formation.getImage();
+        if(imagePath != null){
+            imageView.setImage(new javafx.scene.image.Image(new File(imagePath).toURI().toString()));
+        }
     }
 
     @FXML
