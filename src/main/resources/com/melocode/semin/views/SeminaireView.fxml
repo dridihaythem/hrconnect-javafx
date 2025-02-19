@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.melocode.semin.controllers.SeminaireController">
+    <VBox spacing="10" alignment="TOP_CENTER" layoutX="20" layoutY="20" style="-fx-background-color: #f4f4f4;" prefWidth="600" prefHeight="800">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20" />
+        </padding>
+
+        <!-- Form Section -->
+        <Label text="Ajouter un Séminaire" style="-fx-font-size: 20px;" textFill="BLACK" />
+        <TextField fx:id="nomField" promptText="Nom du Séminaire" />
+        <TextArea fx:id="descriptionField" promptText="Description du Séminaire" />
+        <DatePicker fx:id="dateDebutField" promptText="Date Début" />
+        <DatePicker fx:id="dateFinField" promptText="Date Fin" />
+        <TextField fx:id="lieuField" promptText="Lieu" />
+        <TextField fx:id="formateurField" promptText="Formateur" />
+        <TextField fx:id="coutField" promptText="Coût" />
+        <ComboBox fx:id="typeComboBox" promptText="Sélectionner le type" />
+
+        <!-- Action Buttons -->
+        <HBox spacing="10">
+            <Button fx:id="ajouterButton" text="Ajouter Séminaire" onAction="#ajouterSeminaire" />
+            <Button fx:id="supprimerButton" text="Supprimer Séminaire" onAction="#supprimerSeminaire" />
+            <Button fx:id="modifierButton" text="Modifier Séminaire" onAction="#modifierSeminaire" />
+            <Button fx:id="affichageButton" text="Afficher Séminaires" onAction="#afficherSeminaire" />
+        </HBox>
+
+        <!-- TableView Section -->
+        <TableView fx:id="tableViewSeminaire">
+            <columns>
+                <TableColumn text="Nom" fx:id="colNom" />
+                <TableColumn text="Description" fx:id="colDescription" />
+                <TableColumn text="Date Début" fx:id="colDateDebut" />
+                <TableColumn text="Date Fin" fx:id="colDateFin" />
+                <TableColumn text="Lieu" fx:id="colLieu" />
+                <TableColumn text="Formateur" fx:id="colFormateur" />
+                <TableColumn text="Coût" fx:id="colCout" />
+                <TableColumn text="Type" fx:id="colType" />
+            </columns>
+        </TableView>
+    </VBox>
+</AnchorPane>
