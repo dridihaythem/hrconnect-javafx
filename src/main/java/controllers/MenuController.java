@@ -51,7 +51,7 @@ public class MenuController {
     public void redirectToListeAbsence(ActionEvent actionEvent) {
         Parent root = null;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Absence/ListeAbsence.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ListeAbsence.fxml"));
             root = loader.load();
         } catch (Exception e) {
             throw new RuntimeException(e);

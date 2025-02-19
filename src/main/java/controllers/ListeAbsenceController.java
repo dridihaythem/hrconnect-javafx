@@ -1,6 +1,8 @@
 package controllers;
 
 import io.github.palexdev.materialfx.controls.MFXButton;
+import io.github.palexdev.materialfx.controls.MFXComboBox;
+import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -64,7 +66,7 @@ public class ListeAbsenceController implements Initializable, ShowMenu {
     void onAdd(ActionEvent event) {
         Parent root = null;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Absence/AjouterAbsence.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/AjouterAbsence.fxml"));
             root = loader.load();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -77,7 +79,7 @@ public class ListeAbsenceController implements Initializable, ShowMenu {
     void onEdit(ActionEvent event) {
         Absence selectedAbsence = absencesTable.getSelectionModel().getSelectedItem();
         if (selectedAbsence != null) {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Absence/ModifierAbsence.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ModifierAbsence.fxml"));
             Parent root = null;
             try {
                 root = loader.load();

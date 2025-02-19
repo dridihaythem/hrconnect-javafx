@@ -80,7 +80,7 @@ public class AjouterAbsenceController implements Initializable, ShowMenu {
             // redirect to list
             Parent root = null;
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/Absence/ListeAbsence.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/ListeAbsence.fxml"));
                 root = loader.load();
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -127,7 +127,7 @@ public class AjouterAbsenceController implements Initializable, ShowMenu {
     void onClickCancelBtn(ActionEvent event) {
         Parent root = null;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Absence/ListeAbsence.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ListeAbsence.fxml"));
             root = loader.load();
         } catch (Exception e) {
             throw new RuntimeException(e);
