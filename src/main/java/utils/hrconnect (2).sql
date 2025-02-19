@@ -198,3 +198,12 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+CREATE TABLE Absence (
+                         id INT PRIMARY KEY AUTO_INCREMENT,
+                         employe_id INT NOT NULL,
+                         motif ENUM('MALADIE', 'CONGE', 'AUTRE') NOT NULL,
+                         justificatif TEXT,
+                         remarque TEXT,
+                         date_enregistrement TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                         FOREIGN KEY (employe_id) REFERENCES Employe(id) ON DELETE CASCADE
+);

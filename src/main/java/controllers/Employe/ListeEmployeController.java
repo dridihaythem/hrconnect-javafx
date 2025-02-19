@@ -35,7 +35,7 @@ public class ListeEmployeController implements Initializable, ShowMenu {
         initializeMenu(menu);
 
         TableRow header = new TableRow(TableRowType.HEADER);
-        header.addCell(new TableCell("ID", 50));
+
         header.addCell(new TableCell("Nom", 200));
         header.addCell(new TableCell("Prénom", 200));
         header.addCell(new TableCell("Solde Congés", 150));
@@ -54,8 +54,6 @@ public class ListeEmployeController implements Initializable, ShowMenu {
                 for (int i = 0; i < employes.size(); i++) {
                     int finalI = i;
                     TableRow row = new TableRow(TableRowType.BODY);
-
-                    row.addCell(new TableCell(String.valueOf(employes.get(i).getId()), 50));
                     row.addCell(new TableCell(employes.get(i).getNom(), 200));
                     row.addCell(new TableCell(employes.get(i).getPrenom(), 200));
                     row.addCell(new TableCell(String.valueOf(employes.get(i).getSoldeConges()), 150));

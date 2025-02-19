@@ -44,6 +44,18 @@ public class MenuController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        menu.getScene().setRoot (root);
+        menu.getScene().setRoot(root);
+    }
+
+    @FXML
+    public void redirectToListeAbsence(ActionEvent actionEvent) {
+        Parent root = null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Absence/ListeAbsence.fxml"));
+            root = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        menu.getScene().setRoot(root);
     }
 }
