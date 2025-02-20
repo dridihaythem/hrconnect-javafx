@@ -21,6 +21,8 @@ import utils.ShowMenu;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class AjouterDemandeCongeController implements ShowMenu, Initializable {
@@ -62,6 +64,18 @@ public class AjouterDemandeCongeController implements ShowMenu, Initializable {
 
             EmployeService employeService = new EmployeService();
             Employe employe = employeService.getEmployeById(Integer.parseInt(employeId.getText()));
+
+            List<Demande_Conge> demandes = demandeCongeService.getAll();
+            long totalLeaveTaken = demandes.stream()
+                    .filter(d -> d.getEmploye().getId() == employe.getId())
+                    .mapToLong(d -> ChronoUnit.DAYS.between(d.getDateDebut(), d.getDateFin()) + 1)
+                    .sum();
+
+            long remainingLeaves = employe.getSoldeConges() - totalLeaveTaken;
+
+            if (remainingLeaves < -7) {
+                throw new InvalidInputException("Le solde de congé restant est inférieur à -7 jours. Vous ne pouvez pas créer une nouvelle demande de congé.");
+            }
 
             Demande_Conge demande = new Demande_Conge(
                     employe,

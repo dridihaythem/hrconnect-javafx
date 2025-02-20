@@ -48,12 +48,6 @@
                             </children>
                         </HBox>
                     </children>
-                    <opaqueInsets>
-                        <Insets />
-                    </opaqueInsets>
-                    <padding>
-                        <Insets left="25.0" right="25.0" top="25.0" bottom="25.0" />
-                    </padding>
                 </VBox>
             </children>
         </AnchorPane>

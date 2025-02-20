@@ -8,16 +8,16 @@ import utils.enums.TableRowType;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class TableRow {
     TableRowType type;
     String classe;
     List<TableCell> cells;
     List<HBox> actions;
+    private String style;
 
     public TableRow(TableRowType type) {
         this.type = type;
-        this.cells = new ArrayList();
+        this.cells = new ArrayList<>();
         this.actions = new ArrayList<>();
     }
 
@@ -25,27 +25,32 @@ public class TableRow {
         cells.add(row);
     }
 
-    public  HBox build(){
+    public HBox build() {
         HBox hBox = new HBox();
         hBox.getStyleClass().add(type == TableRowType.HEADER ? "table-header" : "table-body");
+
+        if (style != null && !style.isEmpty()) {
+            hBox.setStyle(style);
+        }
+
         for (TableCell cell : cells) {
             Label lb = cell.build();
-            if(type == TableRowType.HEADER) {
+            if (type == TableRowType.HEADER) {
                 lb.getStyleClass().add("table-header-label");
-            }else{
+            } else {
                 lb.getStyleClass().add("table-body-label");
             }
             hBox.getChildren().add(lb);
         }
-        if(type == TableRowType.BODY) {
-            actions.forEach(action -> {
-                hBox.getChildren().add(action);
-            });
+
+        if (type == TableRowType.BODY) {
+            actions.forEach(action -> hBox.getChildren().add(action));
         }
+
         return hBox;
     }
 
-    public void addAction(String iconName,String classe,Runnable action){
+    public void addAction(String iconName, String classe, Runnable action) {
         HBox container = new HBox();
         container.getStyleClass().add(classe);
 
@@ -54,11 +59,12 @@ public class TableRow {
         icon.setSize("20");
         icon.setFill(javafx.scene.paint.Color.WHITE);
 
-        icon.setOnMouseClicked(event -> {
-            action.run();
-        });
+        icon.setOnMouseClicked(event -> action.run());
         container.getChildren().add(icon);
         actions.add(container);
     }
 
+    public void setStyle(String style) {
+        this.style = style;
+    }
 }
