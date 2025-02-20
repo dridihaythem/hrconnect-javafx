@@ -1,0 +1,168 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
+
+.root {
+    -fx-background-color: #f0f0f0;
+    -fx-padding: 0;
+}
+
+.header {
+    -fx-background-color: white; /* Couverture blanche */
+    -fx-padding: 20;
+    -fx-alignment: center;
+}
+
+.menu {
+    -fx-background-color: linear-gradient(to bottom right, #272b3f, #256b51);
+    -fx-padding: 20;
+    -fx-spacing: 10;
+    -fx-pref-width: 100%; /* Assurer que le menu prend toute la largeur */
+    -fx-pref-height: 100%; /* Assurer que le menu prend toute la hauteur */
+}
+
+.menu-title {
+    -fx-text-fill: #272b3f; /* Couleur du texte */
+    -fx-font-size: 24px; /* Taille de la police */
+    -fx-font-weight: bold; /* Texte en gras */
+}
+
+.menu-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-padding: 10 20;
+    -fx-font-size: 14;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-border-color: white;
+    -fx-border-width: 1;
+}
+
+.menu-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+}
+
+.logout-button {
+    -fx-background-color: #219a6a;
+    -fx-text-fill: white;
+    -fx-padding: 10 20;
+    -fx-font-size: 14;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-border-color: white;
+    -fx-border-width: 1;
+    -fx-alignment: center;
+    -fx-margin-top: auto;
+}
+
+.logout-button:hover {
+    -fx-background-color: #18a383;
+}
+
+.form-container {
+    -fx-padding: 20;
+    -fx-spacing: 15;
+    -fx-background-color: #fff;
+    -fx-border-radius: 5;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 0);
+    -fx-margin-top: 20px; /* Ajuster la marge supérieure pour déplacer tous les éléments plus bas */
+}
+
+.form-title {
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+}
+
+.form-label {
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+    -fx-font-family: 'Roboto', sans-serif; /* Utiliser la police Roboto */
+}
+
+.form-textfield {
+    -fx-padding: 10;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-border-color: #ccc;
+    -fx-border-width: 1;
+    -fx-font-size: 16;
+    -fx-font-family: 'Roboto', sans-serif; /* Utiliser la police Roboto */
+    -fx-background-color: #f0f0f0; /* Couleur de fond des champs */
+    -fx-text-fill: #333; /* Couleur du texte */
+    -fx-transition: all 0.3s ease; /* Transition pour l'animation */
+}
+
+.form-textfield:focused {
+    -fx-border-color: #800080;
+    -fx-background-color: #e0e0e0;
+}
+
+.form-button {
+    -fx-background-color: linear-gradient(to right, #800080, #00FFFF); /* Dégradé de violet à turquoise */
+    -fx-text-fill: white;
+    -fx-padding: 10 20;
+    -fx-font-size: 14;
+    -fx-border-radius: 5;
+    -fx-background-radius: 5;
+    -fx-alignment: center;
+    -fx-margin-top: 20px;
+    -fx-pref-width: 200px; /* Largeur du bouton */
+    -fx-pref-height: 40px; /* Hauteur du bouton */
+    -fx-transition: all 0.3s ease; /* Transition pour l'animation */
+}
+
+.form-button:hover {
+    -fx-background-color: linear-gradient(to right, #00FFFF, #800080);
+}
+
+/* Style pour le titre centré */
+.centered-title {
+    -fx-alignment: center;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-padding: 20px 0;
+    -fx-text-alignment: center;
+    -fx-alignment: center;
+}
+
+/* Style pour les boutons personnalisés */
+.custom-button {
+    -fx-background-color: #1E3A8A; /* Couleur bleu foncé */
+    -fx-text-fill: white; /* Texte blanc */
+    -fx-padding: 10 20; /* Padding pour le bouton */
+    -fx-font-size: 14px; /* Taille de la police */
+    -fx-border-radius: 5px; /* Coins arrondis */
+    -fx-background-radius: 5px; /* Coins arrondis */
+}
+
+.menu-button-color {
+    -fx-background-color: linear-gradient(to bottom right, #272b3f, #256b51); /* Couleur du menu */
+    -fx-text-fill: white; /* Texte blanc */
+    -fx-padding: 10 20; /* Padding pour le bouton */
+    -fx-font-size: 14px; /* Taille de la police */
+    -fx-border-radius: 5px; /* Coins arrondis */
+    -fx-background-radius: 5px; /* Coins arrondis */
+}
+
+/* Style pour les boutons circulaires */
+.circular-button {
+    -fx-background-color: linear-gradient(to right, #800080, #00FFFF); /* Dégradé de violet à turquoise */
+    -fx-text-fill: white;
+    -fx-padding: 10 20;
+    -fx-font-size: 14px;
+    -fx-border-radius: 50%; /* Coins arrondis pour créer un cercle */
+    -fx-background-radius: 50%; /* Coins arrondis pour créer un cercle */
+    -fx-pref-width: 100px; /* Largeur du bouton */
+    -fx-pref-height: 100px; /* Hauteur du bouton */
+    -fx-alignment: center;
+    -fx-margin-top: 20px;
+}
+
+/* Style pour le bouton bleu */
+.blue-button {
+    -fx-background-color: linear-gradient(to bottom right, #272b3f, #256b51); /* Couleur du menu */
+    -fx-text-fill: white; /* Texte blanc */
+    -fx-padding: 10 20; /* Padding pour le bouton */
+    -fx-font-size: 14px; /* Taille de la police */
+    -fx-border-radius: 5px; /* Coins arrondis */
+    -fx-background-radius: 5px; /* Coins arrondis */
+}
