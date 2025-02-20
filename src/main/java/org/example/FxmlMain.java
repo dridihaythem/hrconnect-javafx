@@ -5,7 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import Controllers.RoleController;
+import controllers.RoleController;
 
 public class FxmlMain extends Application {
     @Override

@@ -1,4 +1,4 @@
-package Controllers;
+package controllers;
 
 import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;

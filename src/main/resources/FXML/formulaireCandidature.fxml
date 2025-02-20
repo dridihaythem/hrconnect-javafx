@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.Pane?>
 
-<GridPane styleClass="root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.FormulaireCandidatureController">
+<GridPane styleClass="root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.FormulaireCandidatureController">
     <columnConstraints>
         <ColumnConstraints percentWidth="25" />
         <ColumnConstraints percentWidth="75" />

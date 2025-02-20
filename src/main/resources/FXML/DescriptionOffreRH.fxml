@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.Pane?>
 
-<GridPane styleClass="root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.DescriptionOffreRHController">
+<GridPane styleClass="root" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.DescriptionOffreRHController">
     <columnConstraints>
         <ColumnConstraints percentWidth="25" />
         <ColumnConstraints percentWidth="75" />
