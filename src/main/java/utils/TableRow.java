@@ -9,7 +9,6 @@ import utils.enums.TableRowType;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class TableRow {
     TableRowType type;
     String classe;
