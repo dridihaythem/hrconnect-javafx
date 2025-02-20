@@ -1,10 +1,8 @@
-
-
-.menu{
+.menu {
     -fx-background-color: linear-gradient(to bottom right, #272b3f, #256b51);
 }
 
-.menu-button{
+.menu-button {
     -fx-background-color: transparent;
     -fx-font-family: "Tahoma";
     -fx-font-size: 16px;
@@ -13,7 +11,7 @@
     -fx-alignment: center-left;
 }
 
-.menu-logout-btn{
+.menu-logout-btn {
     -fx-background-color: #256b51;
     -fx-font-family: "Tahoma";
     -fx-font-size: 16px;
@@ -21,29 +19,32 @@
     -fx-text-fill: #fff;
     -fx-alignment: center-left;
 }
-.bg-white{
+
+.bg-white {
     -fx-background-color: #fff;
 }
 
 
-.save-btn , .cancel-btn , .secondary-btn{
+.save-btn,
+.cancel-btn,
+.secondary-btn {
     -fx-font-weight: bold;
     -fx-min-width: 200;
     -fx-padding: 15;
 }
 
-.save-btn{
+.save-btn {
     -fx-text-fill: #fff !important;
     -fx-background-color: linear-gradient(to right, #272b3f, #1e9e6b) !important;
- }
+}
 
-.cancel-btn{
+.cancel-btn {
     -fx-text-fill: #fff !important;
     -fx-background-color: linear-gradient(to right, #ccc, #ccc) !important;
 }
 
 
-.secondary-btn{
+.secondary-btn {
     -fx-text-fill: #fff !important;
     -fx-background-color: linear-gradient(to right, #3a3f58, #3b866b) !important;
     -fx-opacity: 0.9;
@@ -51,24 +52,26 @@
 
 
 /* table */
-.table-header{
+.table-header {
     -fx-background-color: #E5E5E5 !important;
     -fx-padding: 14px 0px;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
 }
 
-.table-header-label{
+.table-header-label {
     -fx-text-fill: #555 !important;
 }
 
-.table-body{
+.table-body {
     -fx-padding: 10px 0px;
 }
-.table-body-label{
-}
 
-.table-show-btn , .table-edit-btn , .table-delete-btn{
+.table-body-label {}
+
+.table-show-btn,
+.table-edit-btn,
+.table-delete-btn {
     -fx-cursor: hand;
     -fx-border-radius: 50%;
     -fx-min-height: 30px;
@@ -79,20 +82,20 @@
     -fx-alignment: center;
 }
 
-.table-delete-btn{
+.table-delete-btn {
     -fx-background-color: #d8726f;
 }
 
-.table-edit-btn{
+.table-edit-btn {
     -fx-background-color: #1e9e6b;
 }
 
-.table-show-btn{
+.table-show-btn {
     -fx-background-color: #0984e3;
 }
 
 
-.formation-card{
+.formation-card {
     -fx-background-color: #dfe6e9;
     -fx-padding: 20px;
     -fx-border-radius: 15px;
