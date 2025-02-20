@@ -21,6 +21,10 @@ import java.io.File;
 import java.net.URL;
 import java.sql.Timestamp;
 import java.util.ResourceBundle;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.layout.AnchorPane;
 
 public class MenuController {
 
@@ -31,7 +35,7 @@ public class MenuController {
     void redirectToGestionDesFormation() {
         Parent root = null;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/DemandeConge/ListeDemandeConge.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/ListeFormation.fxml"));
             root = loader.load();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -44,6 +48,17 @@ public class MenuController {
         Parent root = null;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ValiderConge/ListeValiderConge.fxml"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        menu.getScene().setRoot(root);
+    }
+
+    @FXML
+    public void redirectToToutesLesFormations() {
+        Parent root = null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/ToutesLesFormations.fxml"));
             root = loader.load();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -56,6 +71,17 @@ public class MenuController {
         Parent root = null;
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/Employe/ListeEmploye.fxml"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        menu.getScene().setRoot(root);
+    }
+
+    @FXML
+    public void redirectToMesFormations() {
+        Parent root = null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/MesFormations.fxml"));
             root = loader.load();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -74,6 +100,19 @@ public class MenuController {
         }
         menu.getScene().setRoot(root);
     }
+
+    @FXML
+    public void redirectToListeDemandeConge() {
+        Parent root = null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/DemandeConge/ListeDemandeConge.fxml"));
+            root = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        menu.getScene().setRoot(root);
+    }
+
 
     public static class AjouterAbsenceController implements Initializable, ShowMenu {
 

@@ -14,6 +14,7 @@ public class TableCell {
     public  Label build() {
         Label label = new Label(text);
         label.setMinWidth(minWidth);
+        label.setMaxWidth(minWidth);
         return label;
     }
 }

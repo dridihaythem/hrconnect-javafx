@@ -124,7 +124,7 @@ public class ListeValiderCongeController implements Initializable, ShowMenu {
                 row.addCell(new TableCell(String.valueOf(remainingLeaves), 120));
 
                 if (remainingLeaves < 0) {
-                    row.setStyle("-fx-background-color: red;");
+                    //row.setStyle("-fx-background-color: red;");
                 }
 
                 row.addAction("CHECK", "table-validate-btn", () -> {

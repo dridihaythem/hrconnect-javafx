@@ -113,7 +113,7 @@ public class ListeDemandeCongeController implements Initializable, ShowMenu {
                 row.addCell(new TableCell(String.valueOf(remainingLeaves), 120));
 
                 if (remainingLeaves < 0) {
-                    row.setStyle("-fx-background-color: red;");
+                    //row.setStyle("-fx-background-color: red;");
                 }
 
                 row.addAction("EDIT", "table-edit-btn", () -> {

@@ -3,31 +3,59 @@ package models;
 import javafx.beans.property.*;
 
 public class Employe {
-    private final IntegerProperty id = new SimpleIntegerProperty();
-    private final StringProperty nom = new SimpleStringProperty();
-    private final StringProperty prenom = new SimpleStringProperty();
+    int id;
+    String nom;
+    String prenom;
+    String email;
     private final IntegerProperty soldeConges = new SimpleIntegerProperty();
 
-    public Employe() {}
 
-    public Employe(String nom, String prenom, int soldeConges) {
+    public  Employe(){}
+
+     public Employe(String nom, String prenom, int soldeConges) {
         setNom(nom);
         setPrenom(prenom);
         setSoldeConges(soldeConges);
     }
 
-    // Getters/Setters
-    public int getId() { return id.get(); }
-    public void setId(int value) { id.set(value); }
-    public IntegerProperty idProperty() { return id; }
+    public Employe(int id, String nom, String prenom,String email) {
+        this.id = id;
+        this.nom = nom;
+        this.prenom = prenom;
+        this.email = email;
+    }
 
-    public String getNom() { return nom.get(); }
-    public void setNom(String value) { nom.set(value); }
-    public StringProperty nomProperty() { return nom; }
+    public int getId() {
+        return id;
+    }
 
-    public String getPrenom() { return prenom.get(); }
-    public void setPrenom(String value) { prenom.set(value); }
-    public StringProperty prenomProperty() { return prenom; }
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNom() {
+        return nom;
+    }
+
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    public String getPrenom() {
+        return prenom;
+    }
+
+    public void setPrenom(String prenom) {
+        this.prenom = prenom;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public int getSoldeConges() { return soldeConges.get(); }
     public void setSoldeConges(int value) { soldeConges.set(value); }

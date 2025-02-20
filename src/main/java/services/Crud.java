@@ -14,6 +14,4 @@ public interface Crud<T> {
     void delete(T obj) throws Exception;
 
     List<T> getAll() throws Exception;
-
-    T getEmployeById(int id) throws Exception;
 }

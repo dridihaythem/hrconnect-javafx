@@ -31,14 +31,14 @@ public class MainFx extends Application {
 
 
         //FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/AjouterFormation.fxml"));
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/DemandeConge/ListeDemandeConge.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/ListeFormation.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
 
 
         primaryStage.setScene(scene);
         primaryStage.setWidth(1300);
-        primaryStage.setHeight(700);
+        primaryStage.setHeight(720);
         primaryStage.show();
     }
 }
