@@ -41,7 +41,7 @@ public class ListeAbsenceController implements Initializable, ShowMenu {
         header.addCell(new TableCell("Justificatif", 140));
         header.addCell(new TableCell("Remarque", 200));
         header.addCell(new TableCell("Date Enregistrement", 140));
-        header.addCell(new TableCell("Action", 140));
+        header.addCell(new TableCell("Action", 250));
 
         vbox.getChildren().add(header.build());
 
@@ -59,7 +59,7 @@ public class ListeAbsenceController implements Initializable, ShowMenu {
                     row.addCell(new TableCell(absences.get(i).getMotif().name(), 140));
                     row.addCell(new TableCell(absences.get(i).getJustificatif(), 140));
                     row.addCell(new TableCell(absences.get(i).getRemarque(), 200));
-                    row.addCell(new TableCell(absences.get(i).getDateEnregistrement().toString(), 140));
+                    row.addCell(new TableCell(absences.get(i).getDateEnregistrement().toString(), 250));
 
                     row.addAction("EDIT", "table-edit-btn", () -> {
                         Parent root = null;
