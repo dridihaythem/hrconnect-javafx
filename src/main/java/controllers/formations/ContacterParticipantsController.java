@@ -1,5 +1,6 @@
 package controllers.formations;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import exceptions.InvalidInputException;
 import io.github.palexdev.materialfx.controls.MFXTextField;
 import javafx.concurrent.Task;
@@ -64,7 +65,12 @@ public class ContacterParticipantsController implements Initializable, ShowMenu 
     @FXML
     private Text title;
 
+    @FXML
+    private MFXButton corrigerBtn;
+
     List<String> emails = new ArrayList();
+
+    String lastMessageVersion = null;
 
     @FXML
     void OnClickCancelBtn(ActionEvent event) {
@@ -166,6 +172,98 @@ public class ContacterParticipantsController implements Initializable, ShowMenu 
         initialize(null, null);
     }
 
+    @FXML
+    void improveMsg() {
+        if(lastMessageVersion != null){
+            message.setText(lastMessageVersion);
+            lastMessageVersion = null;
+            corrigerBtn.setText("Corriger et améliorer");
+        }else {
+            lastMessageVersion = message.getText();
+            Task<Void> improveMsgTask = new Task<>() {
+                @Override
+                protected Void call() throws Exception {
+                    GeminiApi();
+                    corrigerBtn.setDisable(true);
+                    return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+                    corrigerBtn.setText("Annuler la correction");
+                    corrigerBtn.setDisable(false);
+                }
+
+                @Override
+                protected void failed() {
+                    super.failed();
+                    corrigerBtn.setDisable(false);
+                }
+            };
+
+            // Run the task in a separate thread
+            Thread improveMsgTThread = new Thread(improveMsgTask);
+            improveMsgTThread.setDaemon(true);
+            improveMsgTThread.start();
+
+        }
+    }
+
+
+    private void GeminiApi(){
+        OkHttpClient client = new OkHttpClient();
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyA1esrizXh4EJvldkXp_II946D5yaBGTbE";
+
+        // Creating the JSON body using Map
+        Map<String, Object> messagePart = new HashMap<>();
+        messagePart.put("text", "repondre uniquement avec le text corriger de cette paragphrase : " + message.getText());
+
+        Map<String, Object> contentPart = new HashMap<>();
+        contentPart.put("parts", new Object[]{messagePart});
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("contents", new Object[]{contentPart});
+
+        try {
+            // Convert Map to JSON string
+            ObjectMapper objectMapper = new ObjectMapper();
+            String jsonPayload = objectMapper.writeValueAsString(requestBody);
+
+            // Create request body
+            RequestBody body = RequestBody.create(jsonPayload, MediaType.get("application/json; charset=utf-8"));
+
+            // Build request
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .build();
+
+            // Execute request
+            try (Response response = client.newCall(request).execute()) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Parse JSON response
+                    String responseBody = response.body().string();
+                    JsonNode rootNode = objectMapper.readTree(responseBody);
+
+                    // Extract the corrected text
+                    String correctedText = rootNode.path("candidates")
+                            .get(0)
+                            .path("content")
+                            .path("parts")
+                            .get(0)
+                            .path("text")
+                            .asText();
+
+                    message.setText(correctedText);
+                } else {
+                    System.out.println("Request failed: " + response.code());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     private void envoyerEmail(String email){
         OkHttpClient client = new OkHttpClient();
         String url = "https://api.emailjs.com/api/v1.0/email/send";
