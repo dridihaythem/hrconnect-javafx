@@ -108,5 +108,31 @@ public class MenuController {
     }
 
 
+    @FXML
+    void redirectToEspaceRh() {
+        Parent root = null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/affichageOffre.fxml"));
+            root = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        menu.getScene().setRoot(root);
+    }
+
+
+    @FXML
+    void redirectToEspaceCandidat() {
+        Parent root = null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/formulaireCandidat.fxml"));
+            root = loader.load();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        menu.getScene().setRoot(root);
+    }
+
+
 
 }

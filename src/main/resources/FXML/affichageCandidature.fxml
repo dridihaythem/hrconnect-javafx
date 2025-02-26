@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -46,6 +47,11 @@
                 <Label styleClass="form-title" text="Liste des Candidatures" />
             </HBox>
             <VBox spacing="10">
+                <!-- Ajouter une ComboBox pour sélectionner une offre d'emploi -->
+                <HBox alignment="CENTER" spacing="10">
+                    <Label text="Sélectionner une offre d'emploi:" />
+                    <ComboBox fx:id="offreComboBox" onAction="#handleOffreSelection" />
+                </HBox>
                 <!-- Contenu de la table -->
                 <VBox fx:id="tableContent" spacing="10">
                     <!-- Les lignes de la table seront ajoutées ici dynamiquement -->

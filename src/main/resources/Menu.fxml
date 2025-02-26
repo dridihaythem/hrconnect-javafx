@@ -30,6 +30,8 @@
                 <Button layoutX="10.0" layoutY="200.0" mnemonicParsing="false" onAction="#redirectToListeDemandeConge" styleClass="menu-button" text="Demander conger" />
                 <Button layoutX="10.0" layoutY="250.0" mnemonicParsing="false" onAction="#redirectToValidateConge" styleClass="menu-button" text="Valider conge" />
                 <Button layoutX="10.0" layoutY="350.0" mnemonicParsing="false" onAction="#redirectToGestionAbsence" styleClass="menu-button" text="Liste Abcence" />
+                <Button layoutX="10.0" layoutY="350.0" mnemonicParsing="false" onAction="#redirectToEspaceRh" styleClass="menu-button" text="Espace RH" />
+                <Button layoutX="10.0" layoutY="350.0" mnemonicParsing="false" onAction="#redirectToEspaceCandidat" styleClass="menu-button" text="Espace Candidat" />
             </children>
         </VBox>
         <Button layoutX="23.0" layoutY="592.0" mnemonicParsing="false" styleClass="menu-logout-btn" text="Logout">

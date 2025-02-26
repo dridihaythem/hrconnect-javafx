@@ -77,4 +77,21 @@ public class OffreEmploiService implements Crud<OffreEmploi> {
         }
         return null;
     }
+
+    // Méthode pour récupérer une offre d'emploi par titre
+    public OffreEmploi getByTitle(String title) throws Exception {
+        String sql = "SELECT * FROM offre_emploi WHERE title = ?";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, title);
+        ResultSet rs = stmt.executeQuery();
+        if (rs.next()) {
+            OffreEmploi offre = new OffreEmploi();
+            offre.setId(rs.getInt("id"));
+            offre.setTitle(rs.getString("title"));
+            offre.setDescription(rs.getString("description"));
+            offre.setLocation(rs.getString("location"));
+            return offre;
+        }
+        return null;
+    }
 }
