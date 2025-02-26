@@ -5,9 +5,13 @@ public class Candidature {
     private int candidatId; // Reference to the candidat table
     private int offreEmploiId; // Reference to the offre_emploi table
     private String cv; // Path to the CV file
+    private String reference;
+    private String status;
 
     // Constructeurs
-    public Candidature() {}
+    public Candidature() {
+        this.status = "En cours";
+    }
 
     public Candidature(int candidatId, int offreEmploiId, String cv) {
         this.candidatId = candidatId;
@@ -53,6 +57,22 @@ public class Candidature {
 
     public void setCv(String cv) {
         this.cv = cv;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override

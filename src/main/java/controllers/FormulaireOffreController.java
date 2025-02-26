@@ -32,6 +32,23 @@ public class FormulaireOffreController {
     private OffreEmploi offreToUpdate; // Offre à mettre à jour
 
     @FXML
+    void initialize() {
+        // Ajouter des écouteurs d'événements pour valider les champs de texte
+        ttitre.textProperty().addListener((observable, oldValue, newValue) -> validateTextField(ttitre, newValue));
+        tdescription.textProperty().addListener((observable, oldValue, newValue) -> validateTextField(tdescription, newValue));
+        tlieu.textProperty().addListener((observable, oldValue, newValue) -> validateTextField(tlieu, newValue));
+    }
+
+    private void validateTextField(TextField textField, String newValue) {
+        if (!newValue.matches("[a-zA-Z\\s]*")) {
+            textField.setStyle("-fx-border-color: red;");
+            showAlert("Erreur de saisie", "Seuls les caractères alphabétiques sont autorisés.");
+        } else {
+            textField.setStyle(null);
+        }
+    }
+
+    @FXML
     void saveoffre() {
         try {
             // Vérifier si on est en mode mise à jour ou création

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" 
+      xmlns="http://javafx.com/javafx/8"
+      fx:controller="controllers.AffichageCandidaturesController"
+      spacing="10"
+      style="-fx-padding: 20;">
+      
+    <HBox spacing="10" alignment="CENTER">
+        <ComboBox fx:id="offreComboBox" promptText="Sélectionner une offre" />
+    </HBox>
+    
+    <GridPane>
+        <columnConstraints>
+            <ColumnConstraints percentWidth="20.0"/>
+            <ColumnConstraints percentWidth="20.0"/>
+            <ColumnConstraints percentWidth="20.0"/>
+            <ColumnConstraints percentWidth="20.0"/>
+            <ColumnConstraints percentWidth="20.0"/>
+        </columnConstraints>
+        
+        <Label text="Titre" GridPane.columnIndex="0"/>
+        <Label text="Email" GridPane.columnIndex="1"/>
+        <Label text="Téléphone" GridPane.columnIndex="2"/>
+        <Label text="CV" GridPane.columnIndex="3"/>
+        <Label text="Actions" GridPane.columnIndex="4"/>
+    </GridPane>
+    
+    <VBox fx:id="tableContent" spacing="10" />
+    
+</VBox> 

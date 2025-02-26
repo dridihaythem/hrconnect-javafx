@@ -145,10 +145,6 @@ public class AffichageOffreController {
                         FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/affichageCandidature.fxml"));
                         Parent root = loader.load();
 
-                        // Passer l'ID de l'offre d'emploi au contrôleur de la page d'affichage des candidatures
-                        AffichageCandidaturesController controller = loader.getController();
-                        controller.setOffreEmploiId(offre.getId());
-
                         // Afficher la nouvelle scène
                         Stage stage = (Stage) offresContainer.getScene().getWindow();
                         stage.setScene(new Scene(root));

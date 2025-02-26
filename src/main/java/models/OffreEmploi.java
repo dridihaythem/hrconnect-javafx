@@ -5,6 +5,7 @@ public class OffreEmploi {
     private String title;
     private String description;
     private String location;
+    private String requirements;
 
     // Constructeurs
     public OffreEmploi() {}
@@ -46,6 +47,14 @@ public class OffreEmploi {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public String getRequirements() {
+        return requirements;
+    }
+
+    public void setRequirements(String requirements) {
+        this.requirements = requirements;
     }
 
     @Override

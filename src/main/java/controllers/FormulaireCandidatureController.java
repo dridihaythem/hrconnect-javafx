@@ -21,6 +21,7 @@ import services.CandidatureService;
 import services.OffreEmploiService;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
@@ -57,6 +58,10 @@ public class FormulaireCandidatureController {
     private File fichierCV;
     private int offreEmploiId;
     private Candidature candidature;
+
+    // Identifiants Twilio
+    public static final String ACCOUNT_SID = "ACb18a994774406c9650ff060b46d6dfdc";
+    public static final String AUTH_TOKEN = "6d7905a8d6d27bdf3945fa8091f1acb2";
 
     public void initialize() {
         // Add hover animation to buttons
@@ -183,6 +188,16 @@ public class FormulaireCandidatureController {
             alert.setContentText("La candidature a été enregistrée avec succès !");
             alert.showAndWait();
 
+            // Récupérer la candidature avec sa référence
+            Candidature savedCandidature = candidatureService.getLatestCandidatureByCandidat(candidatId);
+
+            // Envoyer le SMS avec la référence
+            String messageBody = String.format(
+                "Votre candidature a été enregistrée avec succès (Réf: %s). Nous allons la traiter dès que possible.",
+                savedCandidature.getReference()
+            );
+            sendSms(candidat.getPhone(), messageBody);
+
             // Rediriger vers la page d'affichage des offres pour les candidats
             Parent root = FXMLLoader.load(getClass().getResource("/FXML/affichageOffreCandidat.fxml"));
             Stage stage = (Stage) tnom.getScene().getWindow();
@@ -201,6 +216,38 @@ public class FormulaireCandidatureController {
         }
     }
 
+    private void sendSms(String to, String messageBody) {
+        try {
+            // Ensure the phone number is in E.164 format
+            if (!to.startsWith("+")) {
+                to = "+216" + to; // Assuming the phone number is for Tunisia
+            }
+
+            Class<?> twilioClass = Class.forName("com.twilio.Twilio");
+            Method initMethod = twilioClass.getMethod("init", String.class, String.class);
+            initMethod.invoke(null, ACCOUNT_SID, AUTH_TOKEN);
+
+            Class<?> messageClass = Class.forName("com.twilio.rest.api.v2010.account.Message");
+            Class<?> phoneNumberClass = Class.forName("com.twilio.type.PhoneNumber");
+
+            Object toPhoneNumber = phoneNumberClass.getConstructor(String.class).newInstance(to);
+            Object fromPhoneNumber = phoneNumberClass.getConstructor(String.class).newInstance("MG8677bc2638ef352074901c56106e4a21");
+
+            Method creatorMethod = messageClass.getMethod("creator", phoneNumberClass, phoneNumberClass, String.class);
+            Object messageCreator = creatorMethod.invoke(null, toPhoneNumber, fromPhoneNumber, messageBody);
+
+            Method createMethod = messageCreator.getClass().getMethod("create");
+            Object message = createMethod.invoke(messageCreator);
+
+            Method getSidMethod = message.getClass().getMethod("getSid");
+            String sid = (String) getSidMethod.invoke(message);
+
+            System.out.println("SMS envoyé avec SID : " + sid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @FXML
     void annuler() {
         try {
@@ -214,7 +261,6 @@ public class FormulaireCandidatureController {
             e.printStackTrace();
         }
     }
-
     @FXML
     void afficherOffresRecrutement() {
         try {
@@ -258,10 +304,6 @@ public class FormulaireCandidatureController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/affichageCandidature.fxml"));
             Parent root = loader.load();
 
-            // Passer l'ID de l'offre d'emploi au contrôleur de la page d'affichage des candidatures
-            AffichageCandidaturesController controller = loader.getController();
-            controller.setOffreEmploiId(offreEmploiId);
-
             // Afficher la nouvelle scène
             Stage stage = (Stage) tnom.getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -271,6 +313,7 @@ public class FormulaireCandidatureController {
             e.printStackTrace();
         }
     }
+
     @FXML
     void deconnexion() {
         // Handle logout logic here
