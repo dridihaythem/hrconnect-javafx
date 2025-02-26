@@ -16,6 +16,7 @@ import models.Employe;
 import models.Formation;
 import okhttp3.*;
 import services.FormationService;
+import utils.ConfigReader;
 import utils.ShowMenu;
 import utils.TableCell;
 import utils.TableRow;
@@ -213,7 +214,7 @@ public class ContacterParticipantsController implements Initializable, ShowMenu 
 
     private void GeminiApi(){
         OkHttpClient client = new OkHttpClient();
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyA1esrizXh4EJvldkXp_II946D5yaBGTbE";
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + ConfigReader.get("HAYTHEM_GEMINI_API");
 
         // Creating the JSON body using Map
         Map<String, Object> messagePart = new HashMap<>();
@@ -276,8 +277,8 @@ public class ContacterParticipantsController implements Initializable, ShowMenu 
 
         // Create the main request payload Map
         Map<String, Object> payload = new HashMap<>();
-        payload.put("user_id", "dUgWCgOn-5G2O4_hS");
-        payload.put("accessToken", "raMNe025BwJJKXimgq-GD");
+        payload.put("user_id", ConfigReader.get("HAYTHEM_MAIL_JS_USER_ID"));
+        payload.put("accessToken", ConfigReader.get("HAYTHEM_MAIL_JS_ACCESS_TOKEN"));
         payload.put("service_id", "service_tvxohrv");
         payload.put("template_id", "template_xfgvhqk");
         payload.put("template_params", templateParams);
