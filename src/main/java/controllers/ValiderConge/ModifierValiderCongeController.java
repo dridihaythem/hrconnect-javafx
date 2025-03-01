@@ -16,6 +16,9 @@ import models.StatutDemande;
 import models.Valider_Conge;
 import services.ValiderCongeService;
 import utils.ShowMenu;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -57,13 +60,28 @@ public class ModifierValiderCongeController implements Initializable, ShowMenu {
 
             validerCongeService.createValidation(validation);
 
+            // Envoyer un SMS via Twilio
+            String ACCOUNT_SID = "AC61c61260cdfe92e3856633b61d5bd4e4";
+            String AUTH_TOKEN = "cd49ba090fe8717d4ba2cfac9db64571";
+
+            Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+
+            String messageBody = "Votre demande de congé a été " + statutConge.getValue().toString() + ". Commentaire: " + commentaire.getText();
+            Message message = Message.creator(
+                    new PhoneNumber("+21652979407"),  // Numéro de téléphone du destinataire
+                    new PhoneNumber("+19803066413"),  // Votre numéro Twilio
+                    messageBody
+            ).create();
+
+            System.out.println("SMS envoyé avec l'ID: " + message.getSid());
+
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Succès");
             alert.setHeaderText(null);
-            alert.setContentText("Demande de congé modifiée avec succès");
+            alert.setContentText("Demande de congé modifiée avec succès et SMS envoyé");
             alert.showAndWait();
 
-            //redirect to list
+            // Rediriger vers la liste
             Parent root = FXMLLoader.load(getClass().getResource("/ValiderConge/ListeValiderConge.fxml"));
             statutConge.getScene().setRoot(root);
 
@@ -77,12 +95,10 @@ public class ModifierValiderCongeController implements Initializable, ShowMenu {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Erreur");
             alert.setHeaderText(null);
-            alert.setContentText("An error has occured");
+            alert.setContentText("Une erreur s'est produite: " + e.getMessage());
             alert.showAndWait();
         }
-
     }
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeMenu(menu);
