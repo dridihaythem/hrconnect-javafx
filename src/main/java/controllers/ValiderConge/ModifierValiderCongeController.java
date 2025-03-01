@@ -61,7 +61,7 @@ public class ModifierValiderCongeController implements Initializable, ShowMenu {
             validerCongeService.createValidation(validation);
 
 
-            String ACCOUNT_SID = "sldvsdv";
+            String ACCOUNT_SID = "";
             String AUTH_TOKEN = "";
 
             Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
