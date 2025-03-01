@@ -60,7 +60,7 @@ public class ModifierValiderCongeController implements Initializable, ShowMenu {
 
             validerCongeService.createValidation(validation);
 
-            // Envoyer un SMS via Twilio
+
             String ACCOUNT_SID = "";
             String AUTH_TOKEN = "";
 
@@ -69,7 +69,7 @@ public class ModifierValiderCongeController implements Initializable, ShowMenu {
             String messageBody = "Votre demande de congé a été " + statutConge.getValue().toString() + ". Commentaire: " + commentaire.getText();
             Message message = Message.creator(
                     new PhoneNumber(""),  // Numéro de téléphone du destinataire
-                    new PhoneNumber("+19803066413"),  // Votre numéro Twilio
+                    new PhoneNumber(""),  // Votre numéro Twilio
                     messageBody
             ).create();
 
