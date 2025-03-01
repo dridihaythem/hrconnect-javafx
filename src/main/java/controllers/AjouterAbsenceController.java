@@ -18,8 +18,6 @@ import services.AbsenceService;
 import utils.ShowMenu;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import net.sourceforge.tess4j.Tesseract;
-import net.sourceforge.tess4j.TesseractException;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,20 +61,13 @@ public class AjouterAbsenceController implements Initializable, ShowMenu {
             Absence.Motif motif = motifField.getValue();
             String justificatif = justificatifField.getText();
             if (justificatif != null && !(justificatif.endsWith(".pdf") || justificatif.endsWith(".jpg") || justificatif.endsWith(".png"))) {
-                throw new InvalidInputException("Justificatif must be a PDF, JPG, or PNG file");
+                throw new InvalidInputException("Justificatif must be a PDF or an image file (jpg, png)");
             }
 
             // Vérifier si le fichier est un PDF et contient le mot spécifique
             if (justificatif != null && justificatif.endsWith(".pdf")) {
-                if (!containsWordInPDF(justificatif, "CERTIFICAT MEDICAL")) {
+                if (!containsWord(justificatif, "CERTIFICAT MEDICAL")) {
                     throw new InvalidInputException("Le fichier PDF ne contient pas le mot spécifique 'CERTIFICAT MEDICAL'");
-                }
-            }
-
-            // Vérifier si le fichier est une image et contient le mot spécifique
-            if (justificatif != null && (justificatif.endsWith(".jpg") || justificatif.endsWith(".png"))) {
-                if (!containsWordInImage(justificatif, "CERTIFICAT MEDICAL")) {
-                    throw new InvalidInputException("Le fichier image ne contient pas le mot spécifique 'CERTIFICAT MEDICAL'");
                 }
             }
 
@@ -156,8 +147,8 @@ public class AjouterAbsenceController implements Initializable, ShowMenu {
         employeIdField.getScene().setRoot(root);
     }
 
-    // Méthode pour vérifier si un mot est présent dans un fichier PDF (Apache PDFBox)
-    private boolean containsWordInPDF(String filePath, String wordToFind) {
+    // Méthode pour vérifier si un mot est présent dans un fichier PDF
+    private boolean containsWord(String filePath, String wordToFind) {
         try (PDDocument document = PDDocument.load(new File(filePath))) {
             PDFTextStripper pdfStripper = new PDFTextStripper();
             String text = pdfStripper.getText(document);
@@ -165,26 +156,6 @@ public class AjouterAbsenceController implements Initializable, ShowMenu {
             // Vérification si le mot est présent
             return text.toLowerCase().contains(wordToFind.toLowerCase());
         } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    // Méthode pour vérifier si un mot est présent dans une image (Tesseract OCR)
-    private boolean containsWordInImage(String filePath, String wordToFind) {
-        Tesseract tesseract = new Tesseract();
-        try {
-            // Chemin vers le dossier contenant les fichiers de langue Tesseract
-            tesseract.setDatapath("src/main/resources/tessdata");
-            // Définir la langue (par exemple, "fra" pour le français)
-            tesseract.setLanguage("fra");
-
-            // Extraire le texte de l'image
-            String text = tesseract.doOCR(new File(filePath));
-
-            // Vérifier si le mot est présent dans le texte extrait
-            return text.toLowerCase().contains(wordToFind.toLowerCase());
-        } catch (TesseractException e) {
             e.printStackTrace();
             return false;
         }
