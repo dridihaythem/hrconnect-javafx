@@ -63,6 +63,7 @@ public class ListeFormationController implements Initializable, ShowMenu {
         header.addCell(new TableCell("Titre",250));
         header.addCell(new TableCell("Lieu", 80));
         header.addCell(new TableCell("Disponible pour", 140));
+        header.addCell(new TableCell("Prix", 80));
         header.addCell(new TableCell("Date de début", 140));
         header.addCell(new TableCell("Date de fin", 140));
         header.addCell(new TableCell("Participants", 100));
@@ -96,6 +97,7 @@ public class ListeFormationController implements Initializable, ShowMenu {
                         dispoPour = "Stagaires";
                     }
                     row.addCell(new TableCell(dispoPour,140));
+                    row.addCell(new TableCell(formations.get(i).isFree() ? "Gratuit" : String.valueOf(formations.get(i).getPrice() + " DT"),80));
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getStart_date()),140));
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getEnd_date()),140));
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getNb_participant()),100));

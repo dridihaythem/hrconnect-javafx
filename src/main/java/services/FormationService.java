@@ -19,7 +19,7 @@ public class FormationService implements  Crud<Formation> {
 
     @Override
     public void create(Formation obj) throws Exception {
-        String sql = "insert into formations (formateur_id,title,description,image,is_online,place,available_for_employee,available_for_intern,start_date,end_date) VALUES (?,?, ?, ?,?, ?, ?, ?, ?, ?)";
+        String sql = "insert into formations (formateur_id,title,description,image,is_online,place,available_for_employee,available_for_intern,start_date,end_date,price) VALUES (?,?, ?, ?,?, ?, ?, ?, ?, ?,?)";
         PreparedStatement  stmt = conn.prepareStatement(sql);
         stmt.setInt(1,obj.getFormateur_id());
         stmt.setString(2, obj.getTitle());
@@ -35,13 +35,18 @@ public class FormationService implements  Crud<Formation> {
         } else {
             stmt.setNull(10, java.sql.Types.TIMESTAMP);
         }
+        if(obj.getPrice() != null) {
+            stmt.setDouble(11, obj.getPrice());
+        }{
+            stmt.setNull(11, java.sql.Types.DOUBLE);
+        }
         stmt.executeUpdate();
     }
 
     @Override
     public void update(Formation obj) throws Exception {
         System.out.println(obj);
-        String sql = "update formations set title = ?, description = ?, image = ?, is_online = ?, place = ? , available_for_employee = ?, available_for_intern = ?, start_date = ?, end_date = ? where id = ?";
+        String sql = "update formations set title = ?, description = ?, image = ?, is_online = ?, place = ? , available_for_employee = ?, available_for_intern = ?, start_date = ?, end_date = ? , price = ? where id = ?";
         PreparedStatement  stmt = conn.prepareStatement(sql);
         stmt.setString(1, obj.getTitle());
         stmt.setString(2, obj.getDescription());
@@ -60,7 +65,13 @@ public class FormationService implements  Crud<Formation> {
         } else {
             stmt.setNull(9, java.sql.Types.TIMESTAMP);
         }
-        stmt.setInt(10, obj.getId());
+        if(obj.getPrice() != null) {
+            stmt.setDouble(10, obj.getPrice());
+        }else{
+            stmt.setNull(10, java.sql.Types.DOUBLE);
+        }
+
+        stmt.setInt(11, obj.getId());
         stmt.executeUpdate();
     }
 
@@ -102,6 +113,7 @@ public class FormationService implements  Crud<Formation> {
                 formation.setEnd_date(null);
             }
             formation.setNb_participant(rs.getInt("nb_participants"));
+            formation.setPrice(rs.getDouble("price"));
             formations.add(formation);
         }
         return formations;

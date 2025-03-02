@@ -79,6 +79,10 @@ public class ModifierFormationController implements Initializable, ShowMenu {
     String imagePath;
 
     @FXML
+    private MFXTextField price;
+
+
+    @FXML
     void onSave(ActionEvent event) {
 
         System.out.println(emplacement.getText());
@@ -96,6 +100,10 @@ public class ModifierFormationController implements Initializable, ShowMenu {
                 throw new InvalidInputException("La date de fin doit être supérieure à la date de début");
             }else if(!pourEmployes.isSelected() && !pourStagaires.isSelected()){
                 throw new InvalidInputException("Choisir au moins une catégorie de personnes");
+            }else if(price.getText().isEmpty()) {
+                throw new InvalidInputException("Le prix est requis");
+            }else if(Double.parseDouble(price.getText()) < 0) {
+                throw new InvalidInputException("Le prix doit être supérieur ou égale à 0");
             }
 
             formation.setImage(imagePath);
@@ -115,6 +123,8 @@ public class ModifierFormationController implements Initializable, ShowMenu {
             }else{
                 formation.setEnd_date(null);
             }
+
+            formation.setPrice(Double.parseDouble(price.getText()));
 
             fs.update(formation);
 
@@ -240,6 +250,8 @@ public class ModifierFormationController implements Initializable, ShowMenu {
         if(imagePath != null){
             imageView.setImage(new javafx.scene.image.Image(new File(imagePath).toURI().toString()));
         }
+
+        price.setText(formation.getPrice().toString());
     }
 
     @FXML

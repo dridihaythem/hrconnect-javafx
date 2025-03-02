@@ -71,6 +71,10 @@ public class AjouterFormationController implements ShowMenu, Initializable {
     @FXML
     private ImageView imageView;
 
+    @FXML
+    private MFXTextField price;
+
+
     FormationService fs = new FormationService();
 
     String imagePath;
@@ -93,9 +97,14 @@ public class AjouterFormationController implements ShowMenu, Initializable {
                 throw new InvalidInputException("La date de début doit être supérieure à la date actuelle");
             } else if (!datefin.getText().isEmpty() && datefin.getCalendar().getTime().before(dateDebut.getCalendar().getTime())) {
                 throw new InvalidInputException("La date de fin doit être supérieure à la date de début");
-            }else if(!pourEmployes.isSelected() && !pourStagaires.isSelected()){
+            }else if(!pourEmployes.isSelected() && !pourStagaires.isSelected()) {
                 throw new InvalidInputException("Choisir au moins une catégorie de personnes");
+            }else if(price.getText().isEmpty()) {
+                throw new InvalidInputException("Le prix est requis");
+            }else if(Double.parseDouble(price.getText()) < 0) {
+                throw new InvalidInputException("Le prix doit être supérieur ou égale à 0");
             }
+
 
             Formation formation = new Formation(
                     formateur.getValue().getId(),
@@ -106,7 +115,8 @@ public class AjouterFormationController implements ShowMenu, Initializable {
                     typeFormation.isSelected(),
                     pourEmployes.isSelected(),
                     pourStagaires.isSelected(),
-                    dateDebut.getCalendar().getTime()
+                    dateDebut.getCalendar().getTime(),
+                    Double.parseDouble(price.getText())
             );
 
             if (!datefin.getText().isEmpty()) {
