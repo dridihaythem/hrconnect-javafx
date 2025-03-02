@@ -32,6 +32,7 @@
                 <Button layoutX="10.0" layoutY="350.0" mnemonicParsing="false" onAction="#redirectToGestionAbsence" styleClass="menu-button" text="Liste Abcence" />
                 <Button layoutX="10.0" layoutY="350.0" mnemonicParsing="false" onAction="#redirectToEspaceRh" styleClass="menu-button" text="Espace RH" />
                 <Button layoutX="10.0" layoutY="350.0" mnemonicParsing="false" onAction="#redirectToEspaceCandidat" styleClass="menu-button" text="Espace Candidat" />
+                <Button layoutX="10.0" layoutY="350.0" mnemonicParsing="false" onAction="#redirectToSuiviCandidatures" styleClass="menu-button" text="Suivi candidatures" />
             </children>
         </VBox>
         <Button layoutX="23.0" layoutY="592.0" mnemonicParsing="false" styleClass="menu-logout-btn" text="Logout">
@@ -41,30 +42,4 @@
         </Button>
         <FontAwesomeIconView fill="WHITE" glyphName="USER" layoutX="99.0" layoutY="84.0" size="70" />
     </children>
-<children>
-    <Text fill="WHITE" layoutX="89.0" layoutY="123.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome">
-        <font>
-            <Font size="17.0" />
-        </font>
-    </Text>
-    <Text fill="#1e9e6b" layoutX="79.0" layoutY="154.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="test" text="Haythem">
-        <font>
-            <Font name="System Bold" size="20.0" />
-        </font>
-    </Text>
-    <Line endX="100.0" layoutX="124.0" layoutY="177.0" startX="-100.0" stroke="WHITE" />
-      <VBox layoutX="14.0" layoutY="198.0" spacing="20.0">
-         <children>
-          <Button mnemonicParsing="false" onAction="#redirectToGestionDesFormation" styleClass="menu-button" text="Gestion des formations" />
-            <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#redirectToToutesLesFormations" styleClass="menu-button" text="Toutes Les formations" />
-            <Button layoutX="10.0" layoutY="50.0" mnemonicParsing="false" onAction="#redirectToMesFormations" styleClass="menu-button" text="Mes formations" />
-         </children>
-      </VBox>
-    <Button layoutX="23.0" layoutY="592.0" mnemonicParsing="false" styleClass="menu-logout-btn" text="Logout">
-        <graphic>
-            <FontAwesomeIconView fill="#f7f7f7" glyphName="ARROW_CIRCLE_LEFT" size="17" />
-        </graphic>
-    </Button>
-    <FontAwesomeIconView fill="WHITE" glyphName="USER" layoutX="99.0" layoutY="84.0" size="70" />
-</children>
 </AnchorPane>

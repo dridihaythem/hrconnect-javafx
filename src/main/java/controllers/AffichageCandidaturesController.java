@@ -36,8 +36,28 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Base64;
 import javafx.geometry.Insets;
+import javafx.scene.layout.AnchorPane;
+import javafx.fxml.Initializable;
+import utils.ShowMenu;
 
-public class AffichageCandidaturesController {
+import java.util.ResourceBundle;
+import okhttp3.*;
+import com.google.gson.Gson;
+import javafx.event.ActionEvent;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+
+import java.util.concurrent.TimeUnit;
+import java.net.SocketTimeoutException;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ButtonBar;
+
+public class AffichageCandidaturesController implements Initializable, ShowMenu {
 
     @FXML
     private VBox tableContent;
@@ -48,22 +68,58 @@ public class AffichageCandidaturesController {
     @FXML
     private VBox candidaturesContainer;
 
+    @FXML
+    private AnchorPane menu;
+
     private CandidatureService candidatureService = new CandidatureService();
     private CandidatService candidatService = new CandidatService();
     private OffreEmploiService offreEmploiService = new OffreEmploiService();
 
-    // Identifiants Mailjet
-    private static final String MAILJET_API_KEY_PUBLIC = "2ebaf1f11393a3f2ba29c2f97d789507";
-    private static final String MAILJET_API_KEY_PRIVATE = "3f8a77cc55415a7cc005d2533d14699b";
-    private static final String MAILJET_TEMPLATE_ID_ACCEPTED = "6741933";
-    private static final String MAILJET_TEMPLATE_ID_REJECTED = "6741947";
+    // Configuration Affinda
+    private static final String AFFINDA_API_KEY = "aff_918214b6ae2e8645f878d2128e25293191b3f5e0";
+    private static final String AFFINDA_API_URL = "https://api.affinda.com/v3/documents";
+    private static final String AFFINDA_WORKSPACE_ID = "ALlZPIdI";
+    private static final String AFFINDA_COLLECTION_ID = "EBLFHiPs";
 
-    @FXML
-    public void initialize() {
+    // Configuration du client HTTP avec des timeouts plus longs
+    private static final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .readTimeout(60, TimeUnit.SECONDS)
+            .build();
+    private static final Gson gson = new Gson();
+
+    // Mise à jour des constantes Mailjet
+    private static final String MAILJET_API_KEY_PUBLIC = "9cc981b250baf8bf77bc099729f2b4a9";  // Nouvelle clé API
+    private static final String MAILJET_API_KEY_PRIVATE = "0ea78aa2f67c3a587f71cc294294bc80"; // Nouvelle clé privée
+    private static final String MAILJET_TEMPLATE_ID_ACCEPTED = "6766487";  // Template d'acceptation
+    private static final String MAILJET_TEMPLATE_ID_REJECTED = "6766480";  // Template de rejet
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Initialisation du menu avec le même style que DescriptionOffreRH
+        if (menu != null) {
+            menu.setPrefHeight(200.0);
+            menu.setPrefWidth(200.0);
+            menu.getStyleClass().add("menu");
+            initializeMenu(menu);
+        }
+
         if (tableContent == null) {
             System.out.println("Error: tableContent not injected!");
             return;
         }
+
+        // Style des éléments
+        if (offreComboBox != null) {
+            offreComboBox.setStyle("-fx-font-size: 14px; -fx-padding: 5 10;");
+        }
+
+        if (candidaturesContainer != null) {
+            candidaturesContainer.setSpacing(10);
+            candidaturesContainer.setPadding(new Insets(20));
+        }
+
         loadOffres();
         refreshCandidatures();
     }
@@ -147,9 +203,10 @@ public class AffichageCandidaturesController {
                     row.add(createDataLabel(candidat.getEmail()), 1, 0);
                     row.add(createDataLabel(candidat.getPhone()), 2, 0);
 
-                    // Lien vers le CV
+                    // Créer le lien CV avec le chemin stocké
                     Hyperlink cvLink = new Hyperlink("Voir CV");
-                    cvLink.setOnAction(e -> openCV(candidature.getCv()));
+                    cvLink.setUserData(candidature.getCv()); // Stocker le chemin du CV
+                    cvLink.setOnAction(this::handleViewCV);
                     row.add(cvLink, 3, 0);
 
                     // Boutons d'action
@@ -170,21 +227,35 @@ public class AffichageCandidaturesController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Erreur", "Une erreur est survenue lors du chargement des candidatures.");
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Une erreur est survenue lors du chargement des candidatures.");
         }
     }
 
-    private void openCV(String cvPath) {
+    @FXML
+    private void handleViewCV(ActionEvent event) {
+        // Récupérer le CV de la candidature sélectionnée
+        Hyperlink link = (Hyperlink) event.getSource();
+        GridPane row = (GridPane) link.getParent();
+        String cvPath = link.getUserData().toString(); // Stocker le chemin du CV dans userData
+
         try {
             File cvFile = new File(cvPath);
             if (cvFile.exists()) {
+                // Ouvrir le CV
                 Desktop.getDesktop().open(cvFile);
+
+                // Analyser le CV avec l'API
+                parseResume(cvPath);
+
+                // Afficher un message de chargement
+                showAlert(Alert.AlertType.INFORMATION, "Information",
+                        "L'analyse du CV est en cours. Veuillez patienter...");
             } else {
-                showAlert("Erreur", "Le fichier CV n'existe pas.");
+                showAlert(Alert.AlertType.ERROR, "Erreur", "Le fichier CV n'existe pas.");
             }
         } catch (IOException e) {
             e.printStackTrace();
-            showAlert("Erreur", "Impossible d'ouvrir le fichier CV.");
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Impossible d'ouvrir le fichier CV.");
         }
     }
 
@@ -205,21 +276,42 @@ public class AffichageCandidaturesController {
     }
 
     private void handleRejectCandidature(Candidature candidature) {
+        System.out.println("=== DÉBUT REJET CANDIDATURE ===");
         try {
-            // Mettre à jour le statut avant la suppression
-            candidatureService.updateCandidatureStatus(candidature.getReference(), "refusée");
+            // Mettre à jour le statut avant l'envoi de l'email
+            candidature.setStatus("rejected");
+            candidatureService.update(candidature);
+            System.out.println("Statut de la candidature mis à jour: rejected");
 
-            // Envoyer l'email et supprimer
+            // Envoyer l'email de rejet
+            System.out.println("Tentative d'envoi d'email de rejet...");
             sendEmail(candidature, "rejected");
+            System.out.println("Email de rejet envoyé avec succès");
+
+            // Supprimer la candidature
+            System.out.println("Suppression de la candidature...");
             candidatureService.delete(candidature);
+            System.out.println("Candidature supprimée avec succès");
 
             refreshCandidatures();
+
+            Platform.runLater(() -> {
+                showAlert(Alert.AlertType.INFORMATION, "Succès",
+                        "La candidature a été refusée et supprimée avec succès.");
+            });
         } catch (Exception e) {
+            System.err.println("ERREUR lors du rejet de la candidature:");
             e.printStackTrace();
+            Platform.runLater(() -> {
+                showAlert(Alert.AlertType.ERROR, "Erreur",
+                        "Une erreur est survenue lors du refus de la candidature: " + e.getMessage());
+            });
         }
+        System.out.println("=== FIN REJET CANDIDATURE ===");
     }
 
     private void handleAcceptCandidature(Candidature candidature) {
+        System.out.println("=== DÉBUT ACCEPTATION CANDIDATURE ===");
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Confirmation");
         alert.setHeaderText(null);
@@ -228,65 +320,94 @@ public class AffichageCandidaturesController {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
             try {
-                // Mettre à jour le statut de la candidature acceptée
-                candidatureService.updateCandidatureStatus(candidature.getReference(), "acceptée");
+                // Vérifier que la candidature n'est pas nulle
+                if (candidature == null) {
+                    throw new IllegalArgumentException("La candidature ne peut pas être nulle");
+                }
 
-                // Envoyer l'email d'acceptation au candidat accepté
+                // Vérifier et mettre à jour le statut
+                String newStatus = "accepted";
+                candidature.setStatus(newStatus);
+
+                // Log pour le débogage
+                System.out.println("Mise à jour de la candidature - ID: " + candidature.getId() + ", Status: " + candidature.getStatus());
+
+                // Mettre à jour la candidature
+                boolean updateSuccess = candidatureService.update(candidature);
+                if (!updateSuccess) {
+                    throw new Exception("Échec de la mise à jour de la candidature");
+                }
+
+                // Envoyer l'email d'acceptation
+                System.out.println("Tentative d'envoi d'email d'acceptation...");
                 sendEmail(candidature, "accepted");
+                System.out.println("Email d'acceptation envoyé avec succès");
 
-                // Récupérer et traiter les autres candidatures
-                List<Candidature> otherCandidatures = candidatureService.getCandidaturesByOffreEmploiId(candidature.getOffreEmploiId());
-                for (Candidature otherCandidature : otherCandidatures) {
+                // Récupérer toutes les candidatures pour cette offre
+                List<Candidature> candidatures = candidatureService.getCandidaturesByOffreEmploiId(candidature.getOffreEmploiId());
+                System.out.println("Nombre de candidatures trouvées: " + candidatures.size());
+
+                // Traiter les autres candidatures
+                for (Candidature otherCandidature : candidatures) {
                     if (otherCandidature.getId() != candidature.getId()) {
-                        // Envoyer l'email de refus avant la suppression
+                        // Mettre à jour le statut avant l'envoi de l'email
+                        otherCandidature.setStatus("rejected");
+                        candidatureService.update(otherCandidature);
+                        System.out.println("Statut de la candidature " + otherCandidature.getId() + " mis à jour: rejected");
+
                         sendEmail(otherCandidature, "rejected");
                         candidatureService.delete(otherCandidature);
+                        System.out.println("Candidature " + otherCandidature.getId() + " traitée et supprimée");
                     }
                 }
 
                 // Supprimer l'offre d'emploi
-                OffreEmploi offreEmploi = new OffreEmploi();
-                offreEmploi.setId(candidature.getOffreEmploiId());
+                System.out.println("Suppression de l'offre d'emploi...");
+                OffreEmploi offreEmploi = offreEmploiService.getById(candidature.getOffreEmploiId());
                 offreEmploiService.delete(offreEmploi);
+                System.out.println("Offre d'emploi supprimée avec succès");
 
-                // Afficher un message de succès
-                Alert successAlert = new Alert(Alert.AlertType.INFORMATION);
-                successAlert.setTitle("Succès");
-                successAlert.setHeaderText(null);
-                successAlert.setContentText("La candidature a été acceptée et l'offre d'emploi a été clôturée avec succès !");
-                successAlert.showAndWait();
+                refreshCandidatures();
 
-                // Rediriger vers la page d'affichage des offres d'emploi
-                Parent root = FXMLLoader.load(getClass().getResource("/FXML/affichageOffre.fxml"));
-                Stage stage = (Stage) tableContent.getScene().getWindow();
-                stage.setScene(new Scene(root));
-                stage.setTitle("Liste des offres d'emploi");
-                stage.show();
-
+                Platform.runLater(() -> {
+                    showAlert(Alert.AlertType.INFORMATION, "Succès",
+                            "La candidature a été acceptée, l'offre a été clôturée et les autres candidatures ont été supprimées.");
+                });
             } catch (Exception e) {
+                System.err.println("ERREUR lors de l'acceptation de la candidature:");
                 e.printStackTrace();
-                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-                errorAlert.setTitle("Erreur");
-                errorAlert.setHeaderText(null);
-                errorAlert.setContentText("Une erreur est survenue lors du traitement de la candidature : " + e.getMessage());
-                errorAlert.showAndWait();
+                Platform.runLater(() -> {
+                    showAlert(Alert.AlertType.ERROR, "Erreur",
+                            "Une erreur est survenue lors de l'acceptation de la candidature: " + e.getMessage());
+                });
             }
         }
+        System.out.println("=== FIN ACCEPTATION CANDIDATURE ===");
     }
 
     private void sendEmail(Candidature candidature, String status) {
         try {
+            System.out.println("=== DÉBUT DE L'ENVOI D'EMAIL ===");
+            System.out.println("Status: " + status);
+
             Candidat candidat = candidatService.getById(candidature.getCandidatId());
             OffreEmploi offreEmploi = offreEmploiService.getById(candidature.getOffreEmploiId());
 
             if (candidat == null || offreEmploi == null) {
-                throw new Exception("Impossible de récupérer les informations du candidat ou de l'offre");
+                throw new Exception("Données candidat ou offre manquantes");
             }
 
             String templateId = status.equals("accepted") ? MAILJET_TEMPLATE_ID_ACCEPTED : MAILJET_TEMPLATE_ID_REJECTED;
+            System.out.println("Template ID utilisé: " + templateId);
+
+            // Test de l'authentification
+            String auth = MAILJET_API_KEY_PUBLIC + ":" + MAILJET_API_KEY_PRIVATE;
+            String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(StandardCharsets.UTF_8));
+            System.out.println("Clés utilisées - Public: " + MAILJET_API_KEY_PUBLIC.substring(0, 5) + "..., Private: " + MAILJET_API_KEY_PRIVATE.substring(0, 5) + "...");
+
             String jsonPayload = "{"
                     + "\"Messages\":[{"
-                    + "\"From\": {\"Email\": \"aminraissi54@gmail.com\", \"Name\": \"Amine\"},"
+                    + "\"From\": {\"Email\": \"aminraissi43@gmail.com\", \"Name\": \"Service Recrutement\"},"
                     + "\"To\": [{\"Email\": \"" + candidat.getEmail() + "\", \"Name\": \"" + candidat.getFirstName() + " " + candidat.getLastName() + "\"}],"
                     + "\"TemplateID\": " + templateId + ","
                     + "\"TemplateLanguage\": true,"
@@ -299,11 +420,11 @@ public class AffichageCandidaturesController {
                     + "}]"
                     + "}";
 
-            URI uri = new URI("https://api.mailjet.com/v3.1/send");
-            HttpURLConnection conn = (HttpURLConnection) uri.toURL().openConnection();
+            URL url = new URL("https://api.mailjet.com/v3.1/send");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Authorization", "Basic " + Base64.getEncoder().encodeToString((MAILJET_API_KEY_PUBLIC + ":" + MAILJET_API_KEY_PRIVATE).getBytes(StandardCharsets.UTF_8)));
+            conn.setRequestProperty("Authorization", "Basic " + encodedAuth);
             conn.setDoOutput(true);
 
             try (OutputStream os = conn.getOutputStream()) {
@@ -312,14 +433,32 @@ public class AffichageCandidaturesController {
             }
 
             int responseCode = conn.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                System.out.println("Email sent successfully.");
-            } else {
-                System.out.println("Failed to send email. Response code: " + responseCode);
+            System.out.println("Code de réponse: " + responseCode);
+
+            StringBuilder response = new StringBuilder();
+            try (java.util.Scanner scanner = new java.util.Scanner(
+                    responseCode >= 400 ? conn.getErrorStream() : conn.getInputStream())
+                    .useDelimiter("\\A")) {
+                response.append(scanner.hasNext() ? scanner.next() : "");
             }
+            System.out.println("Réponse complète: " + response.toString());
+
+            if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
+                System.out.println("Email envoyé avec succès!");
+            } else {
+                throw new Exception("Échec de l'envoi de l'email. Code: " + responseCode +
+                        ", Réponse: " + response.toString());
+            }
+
         } catch (Exception e) {
+            System.err.println("ERREUR lors de l'envoi de l'email: " + e.getMessage());
             e.printStackTrace();
+            Platform.runLater(() -> {
+                showAlert(Alert.AlertType.ERROR, "Erreur d'envoi d'email",
+                        "Une erreur est survenue lors de l'envoi de l'email: " + e.getMessage());
+            });
         }
+        System.out.println("=== FIN DE L'ENVOI D'EMAIL ===");
     }
 
     @FXML
@@ -393,9 +532,10 @@ public class AffichageCandidaturesController {
                     row.add(createDataLabel(candidat.getEmail()), 1, 0);
                     row.add(createDataLabel(candidat.getPhone()), 2, 0);
 
-                    // Lien vers le CV
+                    // Créer le lien CV avec le chemin stocké
                     Hyperlink cvLink = new Hyperlink("Voir CV");
-                    cvLink.setOnAction(e -> openCV(candidature.getCv()));
+                    cvLink.setUserData(candidature.getCv()); // Stocker le chemin du CV
+                    cvLink.setOnAction(this::handleViewCV);
                     row.add(cvLink, 3, 0);
 
                     // Boutons d'action
@@ -416,12 +556,12 @@ public class AffichageCandidaturesController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Erreur", "Une erreur est survenue lors du chargement des candidatures.");
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Une erreur est survenue lors du chargement des candidatures.");
         }
     }
 
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
+    private void showAlert(Alert.AlertType type, String title, String content) {
+        Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
@@ -440,7 +580,244 @@ public class AffichageCandidaturesController {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Erreur", "Une erreur est survenue lors du chargement des candidatures.");
+            showAlert(Alert.AlertType.ERROR, "Erreur", "Une erreur est survenue lors du chargement des candidatures.");
+        }
+    }
+
+    private void showResultDialog(String title, String content) {
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle(title);
+        dialog.setHeaderText(null);
+
+        // Création d'une TextArea pour afficher le contenu
+        TextArea textArea = new TextArea(content);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setPrefWidth(600);
+        textArea.setPrefHeight(400);
+
+        // Style CSS pour une meilleure lisibilité
+        textArea.setStyle("-fx-font-family: 'Arial'; -fx-font-size: 14px;");
+
+        // Création d'un ScrollPane contenant la TextArea
+        ScrollPane scrollPane = new ScrollPane(textArea);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+
+        // Ajout du ScrollPane au dialog
+        dialog.getDialogPane().setContent(scrollPane);
+
+        // Définition de la taille minimale du dialog
+        dialog.getDialogPane().setPrefSize(700, 500);
+
+        // Ajout du bouton Fermer
+        ButtonType closeButton = new ButtonType("Fermer", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().add(closeButton);
+
+        // Affichage du dialog
+        dialog.showAndWait();
+    }
+
+    private void parseResume(String cvPath) {
+        try {
+            File cvFile = new File(cvPath);
+            if (!cvFile.exists()) {
+                System.out.println("CV file not found: " + cvPath);
+                return;
+            }
+
+            // Vérifications du fichier
+            if (cvFile.length() > 10 * 1024 * 1024) {
+                Platform.runLater(() -> {
+                    showAlert(Alert.AlertType.ERROR,
+                            "Erreur",
+                            "Le fichier CV est trop volumineux (max 10MB).");
+                });
+                return;
+            }
+
+            String fileName = cvFile.getName().toLowerCase();
+            if (!fileName.endsWith(".pdf") && !fileName.endsWith(".doc") && !fileName.endsWith(".docx")) {
+                Platform.runLater(() -> {
+                    showAlert(Alert.AlertType.ERROR,
+                            "Erreur",
+                            "Format de fichier non supporté. Utilisez PDF, DOC ou DOCX.");
+                });
+                return;
+            }
+
+            RequestBody requestBody = new MultipartBody.Builder()
+                    .setType(MultipartBody.FORM)
+                    .addFormDataPart("file", cvFile.getName(),
+                            RequestBody.create(MediaType.parse("application/octet-stream"), cvFile))
+                    .addFormDataPart("collection", AFFINDA_COLLECTION_ID)
+                    .addFormDataPart("workspace", AFFINDA_WORKSPACE_ID)
+                    .addFormDataPart("wait", "true")
+                    .build();
+
+            Request request = new Request.Builder()
+                    .url(AFFINDA_API_URL)
+                    .addHeader("Authorization", "Bearer " + AFFINDA_API_KEY)
+                    .addHeader("Accept", "application/json")
+                    .post(requestBody)
+                    .build();
+
+            System.out.println("Sending request to Affinda...");
+            System.out.println("URL: " + AFFINDA_API_URL);
+            System.out.println("File path: " + cvPath);
+            System.out.println("Collection ID: " + AFFINDA_COLLECTION_ID);
+            System.out.println("Workspace ID: " + AFFINDA_WORKSPACE_ID);
+
+            Platform.runLater(() -> {
+                showAlert(Alert.AlertType.INFORMATION,
+                        "Information",
+                        "Analyse du CV en cours...\nCela peut prendre jusqu'à une minute.");
+            });
+
+            try (Response response = client.newCall(request).execute()) {
+                String responseBody = response.body().string();
+                System.out.println("Response from Affinda: " + responseBody);
+
+                if (response.isSuccessful()) {
+                    JsonObject jsonResponse = gson.fromJson(responseBody, JsonObject.class);
+                    StringBuilder analysisResult = new StringBuilder();
+                    analysisResult.append("RÉSULTATS DE L'ANALYSE DU CV\n");
+                    analysisResult.append("================================\n\n");
+
+                    if (jsonResponse.has("data")) {
+                        JsonObject data = jsonResponse.getAsJsonObject("data");
+
+                        // Résumé
+                        if (data.has("summary")) {
+                            JsonObject summary = data.getAsJsonObject("summary");
+                            if (summary.has("parsed")) {
+                                analysisResult.append("📋 RÉSUMÉ\n")
+                                        .append("----------------\n")
+                                        .append(summary.get("parsed").getAsString())
+                                        .append("\n\n");
+                            }
+                        }
+
+                        // Texte brut
+                        if (data.has("rawText")) {
+                            String rawText = data.get("rawText").getAsString();
+
+                            // Compétences
+                            if (rawText.contains("COMPÉTENCES")) {
+                                analysisResult.append("💪 COMPÉTENCES\n")
+                                        .append("----------------\n");
+                                String[] lines = rawText.split("\n");
+                                boolean inSkillsSection = false;
+
+                                for (String line : lines) {
+                                    if (line.contains("COMPÉTENCES")) {
+                                        inSkillsSection = true;
+                                        continue;
+                                    }
+                                    if (inSkillsSection) {
+                                        if (line.trim().isEmpty() || line.contains("CENTRES")) {
+                                            break;
+                                        }
+                                        if (line.trim().startsWith("•")) {
+                                            analysisResult.append(line.trim()).append("\n");
+                                        }
+                                    }
+                                }
+                                analysisResult.append("\n");
+                            }
+
+                            // Expérience professionnelle
+                            if (rawText.contains("EXPERIENCES PROFESSIONNELLES")) {
+                                analysisResult.append("💼 EXPÉRIENCE PROFESSIONNELLE\n")
+                                        .append("--------------------------------\n");
+                                String[] lines = rawText.split("\n");
+                                boolean inExperienceSection = false;
+
+                                for (String line : lines) {
+                                    if (line.contains("EXPERIENCES PROFESSIONNELLES")) {
+                                        inExperienceSection = true;
+                                        continue;
+                                    }
+                                    if (inExperienceSection) {
+                                        if (line.contains("FORMATION")) {
+                                            break;
+                                        }
+                                        if (!line.trim().isEmpty()) {
+                                            analysisResult.append(line.trim()).append("\n");
+                                        }
+                                    }
+                                }
+                                analysisResult.append("\n");
+                            }
+
+                            // Formation
+                            if (rawText.contains("FORMATION")) {
+                                analysisResult.append("🎓 FORMATION\n")
+                                        .append("----------------\n");
+                                String[] lines = rawText.split("\n");
+                                boolean inEducationSection = false;
+
+                                for (String line : lines) {
+                                    if (line.contains("FORMATION")) {
+                                        inEducationSection = true;
+                                        continue;
+                                    }
+                                    if (inEducationSection) {
+                                        if (line.contains("COPYRIGHT")) {
+                                            break;
+                                        }
+                                        if (!line.trim().isEmpty()) {
+                                            analysisResult.append(line.trim()).append("\n");
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    Platform.runLater(() -> {
+                        showResultDialog("Résultats de l'analyse du CV", analysisResult.toString());
+                    });
+                } else {
+                    System.out.println("Error analyzing CV: " + response.code());
+                    String errorMessage = "Erreur lors de l'analyse du CV.\n";
+                    if (response.code() == 401) {
+                        errorMessage += "Erreur d'authentification. Veuillez vérifier la clé API.";
+                    } else if (response.code() == 404) {
+                        errorMessage += "Service non trouvé. Veuillez vérifier l'URL de l'API.";
+                    } else {
+                        errorMessage += "Code: " + response.code() + "\nRéponse: " + responseBody;
+                    }
+
+                    final String finalErrorMessage = errorMessage;
+                    Platform.runLater(() -> {
+                        showAlert(Alert.AlertType.ERROR,
+                                "Erreur",
+                                finalErrorMessage);
+                    });
+                }
+            } catch (SocketTimeoutException e) {
+                System.out.println("Timeout during API call: " + e.getMessage());
+                Platform.runLater(() -> {
+                    showAlert(Alert.AlertType.ERROR,
+                            "Erreur de timeout",
+                            "L'analyse du CV a pris trop de temps. Veuillez réessayer.");
+                });
+            } catch (IOException e) {
+                System.out.println("IO Error during API call: " + e.getMessage());
+                Platform.runLater(() -> {
+                    showAlert(Alert.AlertType.ERROR,
+                            "Erreur",
+                            "Une erreur est survenue lors de la communication avec le serveur: " + e.getMessage());
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Platform.runLater(() -> {
+                showAlert(Alert.AlertType.ERROR,
+                        "Erreur",
+                        "Une erreur est survenue lors de l'analyse du CV: " + e.getMessage());
+            });
         }
     }
 }

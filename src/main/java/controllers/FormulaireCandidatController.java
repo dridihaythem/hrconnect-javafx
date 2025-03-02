@@ -3,6 +3,7 @@ package controllers;
 import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -10,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -17,8 +19,15 @@ import javafx.util.Duration;
 import models.Candidat;
 import services.CandidatService;
 import utils.SessionManager;
+import utils.ShowMenu;
 
-public class FormulaireCandidatController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class FormulaireCandidatController implements Initializable, ShowMenu {
+
+    @FXML
+    private AnchorPane menu;
 
     @FXML
     private TextField tnom;
@@ -53,20 +62,17 @@ public class FormulaireCandidatController {
     @FXML
     private Hyperlink loginLink;
 
-    public void initialize() {
-        // Ajouter des écouteurs d'événements pour les champs de texte
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        initializeMenu(menu);
+
         temail.textProperty().addListener((observable, oldValue, newValue) -> validateFields());
         ttelephone.textProperty().addListener((observable, oldValue, newValue) -> validateFields());
         tnom.textProperty().addListener((observable, oldValue, newValue) -> validateName(tnom));
         tprenom.textProperty().addListener((observable, oldValue, newValue) -> validateName(tprenom));
 
-        // Ajouter des animations pour le bouton
         addHoverAnimation(btnsave);
-
-        // Ajouter une animation pour le titre HRCONNECT
         addTitleAnimation();
-
-        // Ajouter un événement pour le lien de connexion
         loginLink.setOnAction(event -> showLoginForm());
     }
 
@@ -114,7 +120,6 @@ public class FormulaireCandidatController {
             try {
                 CandidatService candidatService = new CandidatService();
 
-                // Vérifier si l'email ou le numéro de téléphone est déjà utilisé
                 if (candidatService.isEmailUsed(temail.getText())) {
                     showAlert("Erreur de validation", "Cet email est déjà utilisé.");
                     return;
@@ -125,7 +130,6 @@ public class FormulaireCandidatController {
                     return;
                 }
 
-                // Créer un candidat avec les informations du formulaire
                 Candidat candidat = new Candidat(
                         tnom.getText(),
                         tprenom.getText(),
@@ -133,13 +137,10 @@ public class FormulaireCandidatController {
                         ttelephone.getText()
                 );
 
-                // Enregistrer le candidat dans la base de données
                 int candidatId = candidatService.createAndGetId(candidat);
 
-                // Stocker le candidat dans SessionManager
                 SessionManager.setCandidat(candidat);
 
-                // Charger la page d'affichage des offres d'emploi pour les candidats
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/affichageOffreCandidat.fxml"));
                 Parent root = loader.load();
 
@@ -159,7 +160,6 @@ public class FormulaireCandidatController {
     void afficherOffres() {
         if (isFormValid()) {
             try {
-                // Charger la page d'affichage des offres pour les candidats
                 Parent root = FXMLLoader.load(getClass().getResource("/FXML/affichageOffreCandidat.fxml"));
                 Stage stage = (Stage) formContainer.getScene().getWindow();
                 stage.setScene(new Scene(root));
@@ -210,7 +210,6 @@ public class FormulaireCandidatController {
 
     private void showLoginForm() {
         try {
-            // Charger la page de connexion
             Parent root = FXMLLoader.load(getClass().getResource("/FXML/login.fxml"));
             Stage stage = (Stage) formContainer.getScene().getWindow();
             stage.setScene(new Scene(root));

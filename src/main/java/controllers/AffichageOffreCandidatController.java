@@ -11,10 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import models.Candidature;
@@ -22,10 +19,14 @@ import models.OffreEmploi;
 import services.CandidatureService;
 import services.OffreEmploiService;
 import utils.SessionManager;
+import utils.ShowMenu;
+import javafx.fxml.Initializable;
+import java.net.URL;
+import java.util.ResourceBundle;
 
 import java.util.List;
 
-public class AffichageOffreCandidatController {
+public class AffichageOffreCandidatController implements Initializable, ShowMenu {
 
     @FXML
     private VBox offresContainer;
@@ -36,12 +37,15 @@ public class AffichageOffreCandidatController {
     @FXML
     private TextField searchField;
 
+    @FXML
+    private AnchorPane menu;
+
     private OffreEmploiService offreService = new OffreEmploiService();
     private CandidatureService candidatureService = new CandidatureService();
 
-    @FXML
-    public void initialize() {
-        // Ajouter l'animation pour le titre HRCONNECT
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        initializeMenu(menu);
         addTitleAnimation();
         refreshOffres("");
     }

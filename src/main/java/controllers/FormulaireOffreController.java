@@ -7,11 +7,27 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import models.OffreEmploi;
 import services.OffreEmploiService;
+import utils.ShowMenu;
+import java.net.URI;
+import java.net.URLEncoder;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import javafx.application.Platform;
+import javafx.scene.control.ButtonType;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.util.Optional;
 
-public class FormulaireOffreController {
+public class FormulaireOffreController implements ShowMenu {
+
+    @FXML
+    private AnchorPane menu;
 
     @FXML
     private Button btnsave;
@@ -31,20 +47,127 @@ public class FormulaireOffreController {
     private OffreEmploiService offreService = new OffreEmploiService();
     private OffreEmploi offreToUpdate; // Offre à mettre à jour
 
+    private static final String LANGUAGETOOL_API_URL = "https://api.languagetool.org/v2/check";
+
     @FXML
-    void initialize() {
-        // Ajouter des écouteurs d'événements pour valider les champs de texte
-        ttitre.textProperty().addListener((observable, oldValue, newValue) -> validateTextField(ttitre, newValue));
-        tdescription.textProperty().addListener((observable, oldValue, newValue) -> validateTextField(tdescription, newValue));
-        tlieu.textProperty().addListener((observable, oldValue, newValue) -> validateTextField(tlieu, newValue));
+    public void initialize() {
+        // Initialiser le menu
+        initializeMenu(menu);
+
+        // Ajouter les écouteurs de focus pour chaque champ
+        ttitre.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) { // Quand le champ perd le focus
+                correctSpelling(ttitre);
+            }
+        });
+
+        tdescription.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) {
+                correctSpelling(tdescription);
+            }
+        });
+
+        tlieu.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            if (!newVal) {
+                correctSpelling(tlieu);
+            }
+        });
     }
 
-    private void validateTextField(TextField textField, String newValue) {
-        if (!newValue.matches("[a-zA-Z\\s]*")) {
-            textField.setStyle("-fx-border-color: red;");
-            showAlert("Erreur de saisie", "Seuls les caractères alphabétiques sont autorisés.");
-        } else {
-            textField.setStyle(null);
+    private void correctSpelling(TextField textField) {
+        String text = textField.getText();
+        if (text.isEmpty() || text.length() < 3) return;
+
+        try {
+            String params = String.format("text=%s&language=fr",
+                    URLEncoder.encode(text, StandardCharsets.UTF_8));
+
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(LANGUAGETOOL_API_URL))
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .POST(HttpRequest.BodyPublishers.ofString(params))
+                    .build();
+
+            client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                    .thenAccept(response -> {
+                        if (response.statusCode() == 200) {
+                            try {
+                                JSONObject jsonResponse = new JSONObject(response.body());
+                                JSONArray matches = jsonResponse.getJSONArray("matches");
+
+                                if (matches.length() > 0) {
+                                    Platform.runLater(() -> {
+                                        // Collecter toutes les corrections
+                                        StringBuilder corrections = new StringBuilder();
+                                        for (int i = 0; i < matches.length(); i++) {
+                                            JSONObject match = matches.getJSONObject(i);
+
+                                            // Vérifier que c'est bien une erreur d'orthographe
+                                            String ruleId = match.getJSONObject("rule").getString("id");
+                                            if (!ruleId.equals("FR_SPELLING_RULE")) continue;
+
+                                            JSONArray replacements = match.getJSONArray("replacements");
+                                            if (replacements.length() > 0) {
+                                                int offset = match.getInt("offset");
+                                                int length = match.getInt("length");
+                                                String errorText = text.substring(offset, offset + length);
+                                                String suggestion = replacements.getJSONObject(0).getString("value");
+
+                                                if (!textField.getText().contains(errorText)) continue;
+
+                                                corrections.append("\"").append(errorText)
+                                                        .append("\" → \"").append(suggestion).append("\"\n");
+                                            }
+                                        }
+
+                                        // Si des corrections ont été trouvées, afficher une seule boîte de dialogue
+                                        if (corrections.length() > 0) {
+                                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                                            alert.setTitle("Corrections suggérées");
+                                            alert.setHeaderText("Des erreurs ont été détectées");
+                                            alert.setContentText("Voulez-vous appliquer les corrections suivantes ?\n\n" +
+                                                    corrections.toString());
+
+                                            Optional<ButtonType> result = alert.showAndWait();
+                                            if (result.isPresent() && result.get() == ButtonType.OK) {
+                                                String correctedText = textField.getText();
+                                                for (int i = 0; i < matches.length(); i++) {
+                                                    JSONObject match = matches.getJSONObject(i);
+                                                    if (!match.getJSONObject("rule").getString("id").equals("FR_SPELLING_RULE"))
+                                                        continue;
+
+                                                    JSONArray replacements = match.getJSONArray("replacements");
+                                                    if (replacements.length() > 0) {
+                                                        int offset = match.getInt("offset");
+                                                        int length = match.getInt("length");
+                                                        String errorText = text.substring(offset, offset + length);
+                                                        String suggestion = replacements.getJSONObject(0).getString("value");
+                                                        correctedText = correctedText.replace(errorText, suggestion);
+                                                    }
+                                                }
+                                                textField.setText(correctedText);
+                                            }
+                                        }
+                                    });
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                System.out.println("Erreur lors du traitement de la réponse: " + e.getMessage());
+                            }
+                        } else {
+                            System.out.println("Erreur API: " + response.statusCode() + " - " + response.body());
+                        }
+                    })
+                    .exceptionally(e -> {
+                        e.printStackTrace();
+                        System.out.println("Erreur de connexion: " + e.getMessage());
+                        return null;
+                    });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Erreur générale: " + e.getMessage());
         }
     }
 

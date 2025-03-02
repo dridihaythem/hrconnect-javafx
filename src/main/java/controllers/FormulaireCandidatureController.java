@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -19,6 +20,7 @@ import models.OffreEmploi;
 import services.CandidatService;
 import services.CandidatureService;
 import services.OffreEmploiService;
+import utils.ShowMenu;
 
 import java.io.File;
 import java.lang.reflect.Method;
@@ -26,7 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
-public class FormulaireCandidatureController {
+public class FormulaireCandidatureController implements ShowMenu {
 
     @FXML
     private TextField tnom;
@@ -52,6 +54,9 @@ public class FormulaireCandidatureController {
     @FXML
     private Label hrConnectTitle;
 
+    @FXML
+    private AnchorPane menu;
+
     private CandidatureService candidatureService = new CandidatureService();
     private CandidatService candidatService = new CandidatService();
     private OffreEmploiService offreEmploiService = new OffreEmploiService();
@@ -60,10 +65,13 @@ public class FormulaireCandidatureController {
     private Candidature candidature;
 
     // Identifiants Twilio
-    public static final String ACCOUNT_SID = "ACb18a994774406c9650ff060b46d6dfdc";
-    public static final String AUTH_TOKEN = "6d7905a8d6d27bdf3945fa8091f1acb2";
+    public static final String ACCOUNT_SID = "AC9189c8672031a0781f3124471b50b0fc";
+    public static final String AUTH_TOKEN = "b48efd6ef629353f79e2223606c1ba6c";
 
     public void initialize() {
+        // Initialiser le menu
+        initializeMenu(menu);
+
         // Add hover animation to buttons
         addHoverAnimation(btnSoumettre);
         addHoverAnimation(btnAnnuler);
@@ -193,8 +201,8 @@ public class FormulaireCandidatureController {
 
             // Envoyer le SMS avec la référence
             String messageBody = String.format(
-                "Votre candidature a été enregistrée avec succès (Réf: %s). Nous allons la traiter dès que possible.",
-                savedCandidature.getReference()
+                    "Votre candidature a été enregistrée avec succès (Réf: %s). Nous allons la traiter dès que possible.",
+                    savedCandidature.getReference()
             );
             sendSms(candidat.getPhone(), messageBody);
 
@@ -231,7 +239,7 @@ public class FormulaireCandidatureController {
             Class<?> phoneNumberClass = Class.forName("com.twilio.type.PhoneNumber");
 
             Object toPhoneNumber = phoneNumberClass.getConstructor(String.class).newInstance(to);
-            Object fromPhoneNumber = phoneNumberClass.getConstructor(String.class).newInstance("MG8677bc2638ef352074901c56106e4a21");
+            Object fromPhoneNumber = phoneNumberClass.getConstructor(String.class).newInstance("+17814121282");
 
             Method creatorMethod = messageClass.getMethod("creator", phoneNumberClass, phoneNumberClass, String.class);
             Object messageCreator = creatorMethod.invoke(null, toPhoneNumber, fromPhoneNumber, messageBody);
@@ -245,6 +253,7 @@ public class FormulaireCandidatureController {
             System.out.println("SMS envoyé avec SID : " + sid);
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Erreur lors de l'envoi du SMS : " + e.getMessage());
         }
     }
 
