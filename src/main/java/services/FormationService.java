@@ -121,7 +121,7 @@ public class FormationService implements  Crud<Formation> {
 
     public List<Formation> getAllFormationsForUser() throws Exception {
 
-        String sql = "SELECT a.id, a.title, a.image, a.is_online, a.description, a.place, a.start_date, a.end_date, b.first_name, b.last_name FROM formations a JOIN formateurs b ON a.formateur_id = b.id WHERE a.id NOT IN ( SELECT formation_id FROM formation_participation WHERE employe_id = 18 ) ORDER BY a.id DESC";
+        String sql = "SELECT a.id, a.title, a.image, a.is_online, a.description, a.place, a.start_date, a.end_date, a.price, b.first_name, b.last_name FROM formations a JOIN formateurs b ON a.formateur_id = b.id WHERE a.id NOT IN ( SELECT formation_id FROM formation_participation WHERE employe_id = 18 ) ORDER BY a.id DESC";
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         List<Formation> formations = new ArrayList<>();
@@ -139,6 +139,7 @@ public class FormationService implements  Crud<Formation> {
             }else{
                 formation.setEnd_date(null);
             }
+            formation.setPrice(rs.getDouble("price"));
             Formateur formateur = new Formateur();
             formateur.setFirstName(rs.getString("first_name"));
             formateur.setLastName(rs.getString("last_name"));

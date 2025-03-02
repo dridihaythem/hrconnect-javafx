@@ -8,17 +8,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.web.WebView;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+
 import java.io.IOException;
-import java.util.Properties;
 
 public class MainFx extends Application {
 
@@ -45,8 +38,8 @@ public class MainFx extends Application {
 
 
         primaryStage.setScene(scene);
-        primaryStage.setWidth(1300);
-        primaryStage.setHeight(720);
+        primaryStage.setWidth(1400);
+        primaryStage.setHeight(750);
         primaryStage.show();
     }
 }
