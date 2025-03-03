@@ -15,6 +15,7 @@
 <?import javafx.scene.text.Text?>
 <?import jfxtras.scene.control.CalendarTextField?>
 
+<?import javafx.scene.control.ListView?>
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1100.0" stylesheets="@../dashboard.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.formations.AjouterFormationController">
    <left>
       <AnchorPane fx:id="menu" prefHeight="200.0" prefWidth="200.0" styleClass="menu" BorderPane.alignment="CENTER" />
@@ -58,6 +59,8 @@
                      </children>
                   </HBox>
                   <MFXTextField fx:id="emplacement" floatMode="BORDER" floatingText="Emplacement" floatingTextGap="3.0" prefHeight="50.0" prefWidth="794.0" />
+                  <ListView fx:id="suggestionsList" visible="false" />
+                  <MFXTextField fx:id="price" floatMode="BORDER" floatingText="Prix" floatingTextGap="3.0" layoutX="35.0" layoutY="376.0" prefHeight="50.0" prefWidth="794.0" />
                   <HBox alignment="BASELINE_LEFT" spacing="25.0">
                      <children>
                         <Text text="Date Début :">

@@ -14,11 +14,15 @@ public class Formation {
 
     private Formateur formateur;
 
+    private Double price;
+
+    private  Double lat,lng;
+
 
     public Formation() {
     }
 
-    public Formation(int id, int formateur_id, String image, String title, String description,String place, boolean is_online, boolean available_for_employee, boolean available_for_intern, Date start_date, Date end_date) {
+    public Formation(int id, int formateur_id, String image, String title, String description,String place, boolean is_online, boolean available_for_employee, boolean available_for_intern, Date start_date, Date end_date,double price) {
         this.id = id;
         this.formateur_id = formateur_id;
         this.image = image;
@@ -30,9 +34,10 @@ public class Formation {
         this.available_for_intern = available_for_intern;
         this.start_date = start_date;
         this.end_date = end_date;
+        this.price = price;
     }
 
-    public Formation(int formateur_id,String image, String title, String description,String place, boolean is_online, boolean available_for_employee, boolean available_for_intern, Date start_date, Date end_date) {
+    public Formation(int formateur_id,String image, String title, String description,String place, boolean is_online, boolean available_for_employee, boolean available_for_intern, Date start_date, Date end_date,Double price) {
         this.formateur_id = formateur_id;
         this.image = image;
         this.title = title;
@@ -43,9 +48,10 @@ public class Formation {
         this.available_for_intern = available_for_intern;
         this.start_date = start_date;
         this.end_date = end_date;
+        this.price = price;
     }
 
-    public Formation(int formateur_id,String image, String title, String description,String place, boolean is_online, boolean available_for_employee, boolean available_for_intern, Date start_date) {
+    public Formation(int formateur_id,String image, String title, String description,String place, boolean is_online, boolean available_for_employee, boolean available_for_intern, Date start_date,Double price) {
         this.formateur_id = formateur_id;
         this.image = image;
         this.title = title;
@@ -55,6 +61,22 @@ public class Formation {
         this.available_for_employee = available_for_employee;
         this.available_for_intern = available_for_intern;
         this.start_date = start_date;
+        this.price = price;
+    }
+
+    public Formation(int formateur_id,String image, String title, String description,String place, boolean is_online, boolean available_for_employee, boolean available_for_intern, Date start_date,Double price,Double lat,Double lng) {
+        this.formateur_id = formateur_id;
+        this.image = image;
+        this.title = title;
+        this.description = description;
+        this.place = place;
+        this.is_online = is_online;
+        this.available_for_employee = available_for_employee;
+        this.available_for_intern = available_for_intern;
+        this.start_date = start_date;
+        this.price = price;
+        this.lat = lat;
+        this.lng = lng;
     }
 
     public int getId() {
@@ -167,6 +189,34 @@ public class Formation {
 
     public void setHas_quiz(boolean has_quiz) {
         this.has_quiz = has_quiz;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public boolean isFree(){
+        return this.price == 0;
+    }
+
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLng() {
+        return lng;
+    }
+
+    public void setLng(Double lng) {
+        this.lng = lng;
     }
 
     @Override
