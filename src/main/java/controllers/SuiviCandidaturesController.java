@@ -7,14 +7,18 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
-import javafx.scene.control.Button;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import models.Candidature;
 import services.CandidatureService;
 import utils.SessionManager;
+import utils.ShowMenu;
 import java.util.List;
 
-public class SuiviCandidaturesController {
+public class SuiviCandidaturesController implements ShowMenu {
+
+    @FXML
+    private AnchorPane menu;
 
     @FXML
     private VBox candidaturesContainer;
@@ -29,7 +33,8 @@ public class SuiviCandidaturesController {
 
     @FXML
     public void initialize() {
-        // Initialisation vide - on attend que l'utilisateur entre une référence
+        // Initialiser le menu
+        initializeMenu(menu);
     }
 
     @FXML
@@ -66,11 +71,11 @@ public class SuiviCandidaturesController {
 
             candidaturesContainer.getChildren().clear();
             String status = candidatureService.getCandidatureStatus(reference);
-            
+
             if (status != null) {
                 Label statusLabel = new Label();
                 statusLabel.setStyle("-fx-padding: 20;");
-                
+
                 switch (status.toLowerCase()) {
                     case "en cours":
                         statusLabel.setText("Votre candidature est en cours de traitement");
@@ -84,7 +89,7 @@ public class SuiviCandidaturesController {
                     default:
                         statusLabel.setText("Statut: " + status);
                 }
-                
+
                 candidaturesContainer.getChildren().add(statusLabel);
             } else {
                 Label notFoundLabel = new Label("Aucune candidature trouvée avec cette référence.");

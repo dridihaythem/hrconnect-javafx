@@ -3,17 +3,26 @@ package controllers;
 import javafx.animation.ScaleTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import models.OffreEmploi;
 import utils.SessionManager;
 import models.Candidat;
+import utils.ShowMenu;
 
-public class DescriptionOffreController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class DescriptionOffreController implements Initializable, ShowMenu {
+
+    @FXML
+    private AnchorPane menu;
 
     @FXML
     private Label titreLabel;
@@ -35,13 +44,32 @@ public class DescriptionOffreController {
 
     private OffreEmploi offre;
 
-    public void initialize() {
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        initializeMenu(menu);
+
+        // Style des labels
+        titreLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        descriptionLabel.setStyle("-fx-font-size: 16px; -fx-wrap-text: true; -fx-padding: 20 0;");
+        lieuLabel.setStyle("-fx-font-size: 16px; -fx-padding: 10 0;");
+
+        // Style des boutons
+        String buttonStyle = "-fx-background-color: #1e3799; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;";
+        btnPostuler.setStyle(buttonStyle);
+        btnRetour.setStyle(buttonStyle);
+
+        // Définir une largeur préférée pour les boutons
+        btnPostuler.setPrefWidth(200);
+        btnRetour.setPrefWidth(200);
+
         // Add hover animation to buttons
         addHoverAnimation(btnRetour);
         addHoverAnimation(btnPostuler);
 
         // Add title animation
-        addTitleAnimation();
+        if (hrConnectTitle != null) {
+            addTitleAnimation();
+        }
     }
 
     public void setOffre(OffreEmploi offre) {
@@ -54,21 +82,17 @@ public class DescriptionOffreController {
     @FXML
     void postuler() {
         try {
-            // Load the application form page
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/FXML/formulaireCandidature.fxml"));
             Parent root = loader.load();
 
-            // Pass the offer and candidate to the FormulaireCandidatureController
             FormulaireCandidatureController controller = loader.getController();
             controller.setOffreEmploiId(offre.getId());
 
-            // Check if the candidate is null before passing it
             Candidat candidat = SessionManager.getCandidat();
             if (candidat != null) {
                 controller.setCandidat(candidat);
             } else {
                 System.out.println("Candidat is null");
-                // You can also display an alert here to inform the user
             }
 
             Stage stage = (Stage) titreLabel.getScene().getWindow();
@@ -83,7 +107,6 @@ public class DescriptionOffreController {
     @FXML
     void retourListe() {
         try {
-            // Load the job offers page for candidates
             Parent root = FXMLLoader.load(getClass().getResource("/FXML/affichageOffreCandidat.fxml"));
             Stage stage = (Stage) btnRetour.getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -97,7 +120,6 @@ public class DescriptionOffreController {
     @FXML
     void afficherOffres() {
         try {
-            // Load the job offers page for candidates
             Parent root = FXMLLoader.load(getClass().getResource("/FXML/affichageOffreCandidat.fxml"));
             Stage stage = (Stage) titreLabel.getScene().getWindow();
             stage.setScene(new Scene(root));
@@ -110,7 +132,7 @@ public class DescriptionOffreController {
 
     @FXML
     void deconnexion() {
-        // Handle logout logic here
+        // Ne rien faire pour désactiver le bouton
     }
 
     private void addHoverAnimation(Button button) {

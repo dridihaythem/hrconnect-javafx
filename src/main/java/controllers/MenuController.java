@@ -16,6 +16,8 @@ import javafx.stage.FileChooser;
 import models.Absence;
 import services.AbsenceService;
 import utils.ShowMenu;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
 
 import java.io.File;
 import java.net.URL;
@@ -133,6 +135,17 @@ public class MenuController {
         menu.getScene().setRoot(root);
     }
 
-
+    @FXML
+    void redirectToSuiviCandidatures() {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/FXML/suiviCandidatures.fxml"));
+            Stage stage = (Stage) menu.getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.setTitle("Suivi des candidatures");
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 }

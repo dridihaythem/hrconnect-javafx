@@ -23,7 +23,7 @@ public class CandidatureService {
         String reference = generateUniqueReference();
         candidature.setReference(reference);
         candidature.setStatus("En cours");
-        
+
         // Insérer dans la table candidature
         String sql = "INSERT INTO candidature (candidat_id, offre_emploi_id, cv, reference, status) VALUES (?, ?, ?, ?, ?)";
         PreparedStatement stmt = conn.prepareStatement(sql);
@@ -44,7 +44,7 @@ public class CandidatureService {
         do {
             // Générer une référence de 8 caractères (lettres majuscules et chiffres)
             reference = "CAN" + String.format("%05d", (int)(Math.random() * 100000));
-            
+
             // Vérifier si la référence existe déjà
             String sql = "SELECT COUNT(*) FROM candidature WHERE reference = ?";
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -54,39 +54,58 @@ public class CandidatureService {
                 isUnique = rs.getInt(1) == 0;
             }
         } while (!isUnique);
-        
+
         return reference;
     }
 
     // Méthode pour mettre à jour une candidature
-    public void update(Candidature candidature) throws Exception {
-        String sql = "UPDATE candidature SET candidat_id = ?, offre_emploi_id = ?, cv = ? WHERE id = ?";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(1, candidature.getCandidatId());
-        stmt.setInt(2, candidature.getOffreEmploiId());
-        stmt.setString(3, candidature.getCv());
-        stmt.setInt(4, candidature.getId());
-        stmt.executeUpdate();
+    public boolean update(Candidature candidature) {
+        try {
+            if (candidature == null) {
+                throw new IllegalArgumentException("La candidature ne peut pas être nulle");
+            }
+
+            // Mise à jour directe sans passer par updateCandidatureStatus
+            String sql = "UPDATE candidature SET status = ? WHERE id = ?";
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, candidature.getStatus());
+            stmt.setInt(2, candidature.getId());
+
+            System.out.println("Mise à jour candidature - Status: " + candidature.getStatus() +
+                    ", ID: " + candidature.getId());
+
+            int rowsAffected = stmt.executeUpdate();
+
+            // Mettre à jour l'historique si nécessaire
+            if (rowsAffected > 0 && candidature.getReference() != null) {
+                updateCandidatureStatus(candidature.getReference(), candidature.getStatus());
+            }
+
+            return rowsAffected > 0;
+        } catch (Exception e) {
+            System.err.println("ERREUR lors de la mise à jour de la candidature: " + e.getMessage());
+            throw new RuntimeException("Erreur lors de la mise à jour de la candidature", e);
+        }
     }
 
     // Méthode pour récupérer toutes les candidatures
     public List<Candidature> getAllCandidatures() throws Exception {
         List<Candidature> candidatures = new ArrayList<>();
         String sql = "SELECT * FROM candidature";
-        
+
         try {
             // Debug de la connexion
             if (conn == null || conn.isClosed()) {
                 System.out.println("Error: Database connection is null or closed!");
                 return candidatures;
             }
-            
+
             PreparedStatement stmt = conn.prepareStatement(sql);
             ResultSet rs = stmt.executeQuery();
-            
+
             // Debug de la requête
             System.out.println("Executing SQL: " + sql);
-            
+
             while (rs.next()) {
                 Candidature candidature = new Candidature();
                 candidature.setId(rs.getInt("id"));
@@ -95,24 +114,24 @@ public class CandidatureService {
                 candidature.setCv(rs.getString("cv"));
                 candidature.setReference(rs.getString("reference"));
                 candidature.setStatus(rs.getString("status"));
-                
+
                 // Debug des données
-                System.out.println("Found candidature: " + 
-                                 "ID=" + candidature.getId() + 
-                                 ", CandidatID=" + candidature.getCandidatId() + 
-                                 ", OffreID=" + candidature.getOffreEmploiId());
-                
+                System.out.println("Found candidature: " +
+                        "ID=" + candidature.getId() +
+                        ", CandidatID=" + candidature.getCandidatId() +
+                        ", OffreID=" + candidature.getOffreEmploiId());
+
                 candidatures.add(candidature);
             }
-            
+
             System.out.println("Total candidatures found: " + candidatures.size());
-            
+
         } catch (Exception e) {
             System.out.println("Error in getAllCandidatures: " + e.getMessage());
             e.printStackTrace();
             throw e;
         }
-        
+
         return candidatures;
     }
 
@@ -169,14 +188,14 @@ public class CandidatureService {
         PreparedStatement stmtSelect = conn.prepareStatement(sqlSelect);
         stmtSelect.setInt(1, offreEmploiId);
         ResultSet rs = stmtSelect.executeQuery();
-        
+
         while (rs.next()) {
             String reference = rs.getString("reference");
             String status = rs.getString("status");
             // Mettre à jour l'historique avant la suppression
             updateCandidatureStatus(reference, status);
         }
-        
+
         // Ensuite, supprimer les candidatures
         String sqlDelete = "DELETE FROM candidature WHERE offre_emploi_id = ?";
         PreparedStatement stmtDelete = conn.prepareStatement(sqlDelete);
@@ -190,7 +209,7 @@ public class CandidatureService {
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, candidatId);
         ResultSet rs = stmt.executeQuery();
-        
+
         while (rs.next()) {
             Candidature candidature = new Candidature();
             candidature.setId(rs.getInt("id"));
@@ -201,7 +220,7 @@ public class CandidatureService {
             candidature.setStatus(rs.getString("status"));
             candidatures.add(candidature);
         }
-        
+
         return candidatures;
     }
 
@@ -210,7 +229,7 @@ public class CandidatureService {
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1, reference);
         ResultSet rs = stmt.executeQuery();
-        
+
         if (rs.next()) {
             Candidature candidature = new Candidature();
             candidature.setId(rs.getInt("id"));
@@ -221,7 +240,7 @@ public class CandidatureService {
             candidature.setStatus(rs.getString("status"));
             return candidature;
         }
-        
+
         return null;
     }
 
@@ -230,7 +249,7 @@ public class CandidatureService {
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, candidatId);
         ResultSet rs = stmt.executeQuery();
-        
+
         if (rs.next()) {
             Candidature candidature = new Candidature();
             candidature.setId(rs.getInt("id"));
@@ -278,7 +297,7 @@ public class CandidatureService {
         PreparedStatement stmtCandidature = conn.prepareStatement(sqlCandidature);
         stmtCandidature.setString(1, reference);
         ResultSet rsCandidature = stmtCandidature.executeQuery();
-        
+
         if (rsCandidature.next()) {
             return rsCandidature.getString("status");
         }
@@ -288,11 +307,27 @@ public class CandidatureService {
         PreparedStatement stmtHistorique = conn.prepareStatement(sqlHistorique);
         stmtHistorique.setString(1, reference);
         ResultSet rsHistorique = stmtHistorique.executeQuery();
-        
+
         if (rsHistorique.next()) {
             return rsHistorique.getString("status");
         }
-        
+
         return null;
+    }
+
+    public void updateCandidatureStatus(int candidatureId, String newStatus) throws Exception {
+        // Récupérer d'abord la candidature pour obtenir sa référence
+        String getRefSql = "SELECT reference FROM candidature WHERE id = ?";
+        PreparedStatement getRefStmt = conn.prepareStatement(getRefSql);
+        getRefStmt.setInt(1, candidatureId);
+        ResultSet rs = getRefStmt.executeQuery();
+
+        if (rs.next()) {
+            String reference = rs.getString("reference");
+            // Utiliser la méthode existante qui prend une référence
+            updateCandidatureStatus(reference, newStatus);
+        } else {
+            throw new Exception("Aucune candidature trouvée avec l'ID: " + candidatureId);
+        }
     }
 }
