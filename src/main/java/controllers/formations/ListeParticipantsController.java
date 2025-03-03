@@ -1,7 +1,9 @@
 package controllers.formations;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -75,4 +77,19 @@ public class ListeParticipantsController implements Initializable, ShowMenu {
         this.formation = formation;
         initialize(null, null);
     }
+
+    @FXML
+    void redirectToContacterParticipants() {
+        Parent root = null;
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/ContacterParticipants.fxml"));
+            root = loader.load();
+            ContacterParticipantsController controller = loader.getController();
+            controller.setFormation(formation);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        menu.getScene().setRoot(root);
+    }
+
 }

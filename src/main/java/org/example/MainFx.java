@@ -8,6 +8,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.scene.web.WebView;
+
 
 import java.io.IOException;
 
@@ -29,7 +31,6 @@ public class MainFx extends Application {
                 .build()
                 .setGlobal();
 
-
         //FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/AjouterFormation.fxml"));
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/formations/ListeFormation.fxml"));
         Parent root = loader.load();
@@ -37,8 +38,8 @@ public class MainFx extends Application {
 
 
         primaryStage.setScene(scene);
-        //primaryStage.setWidth(1300);
-        //primaryStage.setHeight(720);
+        primaryStage.setWidth(1400);
+        primaryStage.setHeight(750);
         primaryStage.show();
     }
 }

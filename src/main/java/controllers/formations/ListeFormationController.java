@@ -1,6 +1,7 @@
 package controllers.formations;
 
 import controllers.formations.quiz.ListeQuizController;
+import io.github.palexdev.materialfx.utils.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 
@@ -13,8 +14,10 @@ import java.util.ResourceBundle;
 
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import models.Formation;
@@ -23,6 +26,23 @@ import utils.ShowMenu;
 import utils.TableCell;
 import utils.TableRow;
 import utils.enums.TableRowType;
+
+import javafx.application.Application;
+import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+
+
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.IOException;
+import javafx.scene.SnapshotParameters;
+
 
 public class ListeFormationController implements Initializable, ShowMenu {
 
@@ -43,6 +63,7 @@ public class ListeFormationController implements Initializable, ShowMenu {
         header.addCell(new TableCell("Titre",250));
         header.addCell(new TableCell("Lieu", 80));
         header.addCell(new TableCell("Disponible pour", 140));
+        header.addCell(new TableCell("Prix", 80));
         header.addCell(new TableCell("Date de début", 140));
         header.addCell(new TableCell("Date de fin", 140));
         header.addCell(new TableCell("Participants", 100));
@@ -76,6 +97,7 @@ public class ListeFormationController implements Initializable, ShowMenu {
                         dispoPour = "Stagaires";
                     }
                     row.addCell(new TableCell(dispoPour,140));
+                    row.addCell(new TableCell(formations.get(i).isFree() ? "Gratuit" : String.valueOf(formations.get(i).getPrice() + " DT"),80));
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getStart_date()),140));
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getEnd_date()),140));
                     row.addCell(new TableCell(String.valueOf(formations.get(i).getNb_participant()),100));
