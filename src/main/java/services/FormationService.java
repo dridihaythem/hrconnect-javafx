@@ -19,7 +19,7 @@ public class FormationService implements  Crud<Formation> {
 
     @Override
     public void create(Formation obj) throws Exception {
-        String sql = "insert into formations (formateur_id,title,description,image,is_online,place,available_for_employee,available_for_intern,start_date,end_date,price) VALUES (?,?, ?, ?,?, ?, ?, ?, ?, ?,?)";
+        String sql = "insert into formations (formateur_id,title,description,image,is_online,place,available_for_employee,available_for_intern,start_date,end_date,price,lat,lng) VALUES (?,?, ?, ?,?, ?, ?, ?, ?, ?,?,?,?)";
         PreparedStatement  stmt = conn.prepareStatement(sql);
         stmt.setInt(1,obj.getFormateur_id());
         stmt.setString(2, obj.getTitle());
@@ -37,8 +37,18 @@ public class FormationService implements  Crud<Formation> {
         }
         if(obj.getPrice() != null) {
             stmt.setDouble(11, obj.getPrice());
-        }{
+        }else{
             stmt.setNull(11, java.sql.Types.DOUBLE);
+        }
+        if(obj.getLat() != null){
+            stmt.setDouble(12, obj.getLat());
+        }else{
+            stmt.setNull(12, java.sql.Types.DOUBLE);
+        }
+        if(obj.getLng() != null) {
+            stmt.setDouble(13, obj.getLng());
+        }else{
+            stmt.setNull(13, java.sql.Types.DOUBLE);
         }
         stmt.executeUpdate();
     }
@@ -46,7 +56,7 @@ public class FormationService implements  Crud<Formation> {
     @Override
     public void update(Formation obj) throws Exception {
         System.out.println(obj);
-        String sql = "update formations set title = ?, description = ?, image = ?, is_online = ?, place = ? , available_for_employee = ?, available_for_intern = ?, start_date = ?, end_date = ? , price = ? where id = ?";
+        String sql = "update formations set title = ?, description = ?, image = ?, is_online = ?, place = ? , available_for_employee = ?, available_for_intern = ?, start_date = ?, end_date = ? , price = ? , lat  = ? ,lng = ? where id = ?";
         PreparedStatement  stmt = conn.prepareStatement(sql);
         stmt.setString(1, obj.getTitle());
         stmt.setString(2, obj.getDescription());
@@ -71,7 +81,17 @@ public class FormationService implements  Crud<Formation> {
             stmt.setNull(10, java.sql.Types.DOUBLE);
         }
 
-        stmt.setInt(11, obj.getId());
+        if(obj.getLat() != null){
+            stmt.setDouble(11, obj.getLat());
+        }else{
+            stmt.setNull(11, java.sql.Types.DOUBLE);
+        }
+        if(obj.getLng() != null) {
+            stmt.setDouble(12, obj.getLng());
+        }else{
+            stmt.setNull(12, java.sql.Types.DOUBLE);
+        }
+        stmt.setInt(13, obj.getId());
         stmt.executeUpdate();
     }
 
@@ -112,6 +132,8 @@ public class FormationService implements  Crud<Formation> {
             }else{
                 formation.setEnd_date(null);
             }
+            formation.setLat(rs.getDouble("lat"));
+            formation.setLng(rs.getDouble("lng"));
             formation.setNb_participant(rs.getInt("nb_participants"));
             formation.setPrice(rs.getDouble("price"));
             formations.add(formation);
@@ -121,7 +143,7 @@ public class FormationService implements  Crud<Formation> {
 
     public List<Formation> getAllFormationsForUser() throws Exception {
 
-        String sql = "SELECT a.id, a.title, a.image, a.is_online, a.description, a.place, a.start_date, a.end_date, a.price, b.first_name, b.last_name FROM formations a JOIN formateurs b ON a.formateur_id = b.id WHERE a.id NOT IN ( SELECT formation_id FROM formation_participation WHERE employe_id = 18 ) ORDER BY a.id DESC";
+        String sql = "SELECT a.id, a.title, a.image, a.is_online, a.description, a.place, a.start_date, a.end_date, a.price , a.lat , a.lng, b.first_name, b.last_name FROM formations a JOIN formateurs b ON a.formateur_id = b.id WHERE a.id NOT IN ( SELECT formation_id FROM formation_participation WHERE employe_id = 18 ) ORDER BY a.id DESC";
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         List<Formation> formations = new ArrayList<>();
@@ -140,6 +162,8 @@ public class FormationService implements  Crud<Formation> {
                 formation.setEnd_date(null);
             }
             formation.setPrice(rs.getDouble("price"));
+            formation.setLat(rs.getDouble("lat"));
+            formation.setLng(rs.getDouble("lng"));
             Formateur formateur = new Formateur();
             formateur.setFirstName(rs.getString("first_name"));
             formateur.setLastName(rs.getString("last_name"));

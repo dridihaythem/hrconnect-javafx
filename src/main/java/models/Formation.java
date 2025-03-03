@@ -16,6 +16,8 @@ public class Formation {
 
     private Double price;
 
+    private  Double lat,lng;
+
 
     public Formation() {
     }
@@ -60,6 +62,21 @@ public class Formation {
         this.available_for_intern = available_for_intern;
         this.start_date = start_date;
         this.price = price;
+    }
+
+    public Formation(int formateur_id,String image, String title, String description,String place, boolean is_online, boolean available_for_employee, boolean available_for_intern, Date start_date,Double price,Double lat,Double lng) {
+        this.formateur_id = formateur_id;
+        this.image = image;
+        this.title = title;
+        this.description = description;
+        this.place = place;
+        this.is_online = is_online;
+        this.available_for_employee = available_for_employee;
+        this.available_for_intern = available_for_intern;
+        this.start_date = start_date;
+        this.price = price;
+        this.lat = lat;
+        this.lng = lng;
     }
 
     public int getId() {
@@ -184,6 +201,22 @@ public class Formation {
 
     public boolean isFree(){
         return this.price == 0;
+    }
+
+    public Double getLat() {
+        return lat;
+    }
+
+    public void setLat(Double lat) {
+        this.lat = lat;
+    }
+
+    public Double getLng() {
+        return lng;
+    }
+
+    public void setLng(Double lng) {
+        this.lng = lng;
     }
 
     @Override
