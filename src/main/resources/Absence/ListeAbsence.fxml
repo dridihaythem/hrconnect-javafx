@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="650.0" prefWidth="1100.0" stylesheets="@../dashboard.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Absence.ListeAbsenceController">
@@ -16,11 +17,18 @@
             <children>
                 <VBox layoutX="41.0" layoutY="269.0" prefHeight="650.4" prefWidth="900.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <children>
-                        <Button mnemonicParsing="false" onAction="#onAdd" styleClass="save-btn" text="Ajouter une absence">
-                            <graphic>
-                                <FontAwesomeIconView fill="WHITE" glyphName="PLUS" size="16" />
-                            </graphic>
-                        </Button>
+                        <HBox spacing="10">
+                            <Button mnemonicParsing="false" onAction="#onShowStats" styleClass="save-btn" text="Afficher les Statistiques">
+                                <graphic>
+                                    <FontAwesomeIconView fill="WHITE" glyphName="BAR_CHART" size="16" />
+                                </graphic>
+                            </Button>
+                            <Button mnemonicParsing="false" onAction="#onAdd" styleClass="save-btn" text="Ajouter une absence">
+                                <graphic>
+                                    <FontAwesomeIconView fill="WHITE" glyphName="PLUS" size="16" />
+                                </graphic>
+                            </Button>
+                        </HBox>
                         <VBox fx:id="vbox" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                     </children>
                     <opaqueInsets>

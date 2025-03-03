@@ -18,6 +18,8 @@ import services.AbsenceService;
 import utils.ShowMenu;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import net.sourceforge.tess4j.Tesseract;
+import net.sourceforge.tess4j.TesseractException;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,14 +62,20 @@ public class AjouterAbsenceController implements Initializable, ShowMenu {
             int employeId = Integer.parseInt(employeIdField.getText());
             Absence.Motif motif = motifField.getValue();
             String justificatif = justificatifField.getText();
+
             if (justificatif != null && !(justificatif.endsWith(".pdf") || justificatif.endsWith(".jpg") || justificatif.endsWith(".png"))) {
-                throw new InvalidInputException("Justificatif must be a PDF or an image file (jpg, png)");
+                throw new InvalidInputException("Le justificatif doit être un fichier PDF ou une image (jpg, png)");
             }
 
-            // Vérifier si le fichier est un PDF et contient le mot spécifique
             if (justificatif != null && justificatif.endsWith(".pdf")) {
                 if (!containsWord(justificatif, "CERTIFICAT MEDICAL")) {
-                    throw new InvalidInputException("Le fichier PDF ne contient pas le mot spécifique 'CERTIFICAT MEDICAL'");
+                    throw new InvalidInputException("Le fichier PDF ne contient pas le mot 'CERTIFICAT MEDICAL'");
+                }
+            }
+
+            if (justificatif != null && (justificatif.endsWith(".jpg") || justificatif.endsWith(".png"))) {
+                if (!containsWordInImage(justificatif, "CERTIFICAT MEDICAL")) {
+                    throw new InvalidInputException("Le fichier image ne contient pas le mot 'CERTIFICAT MEDICAL'");
                 }
             }
 
@@ -88,29 +96,12 @@ public class AjouterAbsenceController implements Initializable, ShowMenu {
             alert.setContentText("Absence ajoutée avec succès");
             alert.showAndWait();
 
-            // Rediriger vers la liste
-            Parent root = null;
-            try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/Absence/ListeAbsence.fxml"));
-                root = loader.load();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-
+            Parent root = new FXMLLoader(getClass().getResource("/Absence/ListeAbsence.fxml")).load();
             employeIdField.getScene().setRoot(root);
-
         } catch (InvalidInputException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText(null);
-            alert.setContentText(e.getMessage());
-            alert.showAndWait();
+            showErrorAlert(e.getMessage());
         } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText(null);
-            alert.setContentText("Une erreur est survenue");
-            alert.showAndWait();
+            showErrorAlert("Une erreur est survenue");
         }
     }
 
@@ -130,34 +121,47 @@ public class AjouterAbsenceController implements Initializable, ShowMenu {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         initializeMenu(menu);
-
         motifField.getItems().addAll(Absence.Motif.values());
     }
 
     @FXML
     void onClickCancelBtn(ActionEvent event) {
-        Parent root = null;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Absence/ListeAbsence.fxml"));
-            root = loader.load();
+            Parent root = new FXMLLoader(getClass().getResource("/Absence/ListeAbsence.fxml")).load();
+            employeIdField.getScene().setRoot(root);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        employeIdField.getScene().setRoot(root);
     }
 
-    // Méthode pour vérifier si un mot est présent dans un fichier PDF
     private boolean containsWord(String filePath, String wordToFind) {
         try (PDDocument document = PDDocument.load(new File(filePath))) {
-            PDFTextStripper pdfStripper = new PDFTextStripper();
-            String text = pdfStripper.getText(document);
-
-            // Vérification si le mot est présent
+            String text = new PDFTextStripper().getText(document);
             return text.toLowerCase().contains(wordToFind.toLowerCase());
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
+    }
+
+    private boolean containsWordInImage(String filePath, String wordToFind) {
+        Tesseract tesseract = new Tesseract();
+        try {
+            tesseract.setDatapath("C:\\Users\\bente\\OneDrive\\Bureau\\pi\\hrconnect-javafx\\src\\main\\java\\controllers\\Absence\\tessdata");
+            tesseract.setLanguage("fra");
+            String text = tesseract.doOCR(new File(filePath));
+            return text.toLowerCase().contains(wordToFind.toLowerCase());
+        } catch (TesseractException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private void showErrorAlert(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erreur");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

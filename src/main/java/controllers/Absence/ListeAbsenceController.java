@@ -9,7 +9,9 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import models.Absence;
+import models.Employe;
 import services.AbsenceService;
+import services.EmployeService;
 import utils.ShowMenu;
 import utils.TableCell;
 import utils.TableRow;
@@ -30,6 +32,7 @@ public class ListeAbsenceController implements Initializable, ShowMenu {
     private VBox vbox;
 
     AbsenceService absenceService = new AbsenceService();
+    EmployeService employeService = new EmployeService();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -37,6 +40,8 @@ public class ListeAbsenceController implements Initializable, ShowMenu {
 
         TableRow header = new TableRow(TableRowType.HEADER);
 
+        header.addCell(new TableCell("Nom", 140));
+        header.addCell(new TableCell("Prénom", 140));
         header.addCell(new TableCell("Motif", 140));
         header.addCell(new TableCell("Justificatif", 140));
         header.addCell(new TableCell("Remarque", 200));
@@ -55,11 +60,16 @@ public class ListeAbsenceController implements Initializable, ShowMenu {
             } else {
                 for (int i = 0; i < absences.size(); i++) {
                     int finalI = i;
+                    Absence absence = absences.get(i);
+                    Employe employe = employeService.getEmployeById(absence.getEmployeId());
+
                     TableRow row = new TableRow(TableRowType.BODY);
-                    row.addCell(new TableCell(absences.get(i).getMotif().name(), 140));
-                    row.addCell(new TableCell(absences.get(i).getJustificatif(), 140));
-                    row.addCell(new TableCell(absences.get(i).getRemarque(), 200));
-                    row.addCell(new TableCell(absences.get(i).getDateEnregistrement().toString(), 250));
+                    row.addCell(new TableCell(employe.getNom(), 140));
+                    row.addCell(new TableCell(employe.getPrenom(), 140));
+                    row.addCell(new TableCell(absence.getMotif().name(), 140));
+                    row.addCell(new TableCell(absence.getJustificatif(), 140));
+                    row.addCell(new TableCell(absence.getRemarque(), 200));
+                    row.addCell(new TableCell(absence.getDateEnregistrement().toString(), 250));
 
                     row.addAction("EDIT", "table-edit-btn", () -> {
                         Parent root = null;
@@ -114,6 +124,17 @@ public class ListeAbsenceController implements Initializable, ShowMenu {
         Parent root = null;
         try {
             root = FXMLLoader.load(getClass().getResource("/Absence/AjouterAbsence.fxml"));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        vbox.getScene().setRoot(root);
+    }
+
+    @FXML
+    void onShowStats() {
+        Parent root = null;
+        try {
+            root = FXMLLoader.load(getClass().getResource("/Absence/stats_absence.fxml"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
