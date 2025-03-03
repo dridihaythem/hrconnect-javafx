@@ -1,26 +1,5 @@
 package controllers;
 
-import exceptions.InvalidInputException;
-import io.github.palexdev.materialfx.controls.MFXButton;
-import io.github.palexdev.materialfx.controls.MFXComboBox;
-import io.github.palexdev.materialfx.controls.MFXTextField;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TextArea;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.FileChooser;
-import models.Absence;
-import services.AbsenceService;
-import utils.ShowMenu;
-
-import java.io.File;
-import java.net.URL;
-import java.sql.Timestamp;
-import java.util.ResourceBundle;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -99,7 +78,7 @@ public class MenuController {
     void redirectToGestionAbsence() {
         Parent root = null;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ListeAbsence.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Absence/ListeAbsence.fxml"));
             root = loader.load();
         } catch (Exception e) {
             throw new RuntimeException(e);

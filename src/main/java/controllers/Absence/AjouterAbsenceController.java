@@ -1,4 +1,4 @@
-package controllers;
+package controllers.Absence;
 
 import exceptions.InvalidInputException;
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -91,7 +91,7 @@ public class AjouterAbsenceController implements Initializable, ShowMenu {
             // Rediriger vers la liste
             Parent root = null;
             try {
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/ListeAbsence.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/Absence/ListeAbsence.fxml"));
                 root = loader.load();
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -138,7 +138,7 @@ public class AjouterAbsenceController implements Initializable, ShowMenu {
     void onClickCancelBtn(ActionEvent event) {
         Parent root = null;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ListeAbsence.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Absence/ListeAbsence.fxml"));
             root = loader.load();
         } catch (Exception e) {
             throw new RuntimeException(e);

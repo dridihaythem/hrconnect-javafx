@@ -1,4 +1,4 @@
-package controllers;
+package controllers.Absence;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -64,7 +64,7 @@ public class ListeAbsenceController implements Initializable, ShowMenu {
                     row.addAction("EDIT", "table-edit-btn", () -> {
                         Parent root = null;
                         try {
-                            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ModifierAbsence.fxml"));
+                            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Absence/ModifierAbsence.fxml"));
                             root = loader.load();
                             ModifierAbsenceController controller = loader.getController();
                             controller.setAbsence(absences.get(finalI));
@@ -113,7 +113,7 @@ public class ListeAbsenceController implements Initializable, ShowMenu {
     void onAdd() {
         Parent root = null;
         try {
-            root = FXMLLoader.load(getClass().getResource("/AjouterAbsence.fxml"));
+            root = FXMLLoader.load(getClass().getResource("/Absence/AjouterAbsence.fxml"));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

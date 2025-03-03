@@ -126,7 +126,7 @@ public class AjouterDemandeCongeController implements ShowMenu, Initializable {
         try {
             // Configuration du serveur SMTP (exemple avec Gmail)
             Mailer mailer = MailerBuilder
-                    .withSMTPServer("smtp.gmail.com", 587, "", "")
+                    .withSMTPServer("smtp.gmail.com", 587, "chikenbrain26@gmail.com", "cull zslx rdjy apqu")
                     .withTransportStrategy(TransportStrategy.SMTP_TLS)
                     .buildMailer();
 
