@@ -2,6 +2,7 @@ package services;
 
 import models.Formation;
 import models.Quiz;
+import models.QuizReponse;
 import utils.MyDb;
 import utils.enums.QuizType;
 
@@ -103,5 +104,22 @@ public class QuizService implements Crud<Quiz> {
         stmt.setInt(2,quiz_id);
         stmt.setInt(3,num_reponse);
         stmt.executeUpdate();
+    }
+
+    public List<QuizReponse> getUserReponses(int formation_id,int employe_id) throws Exception{
+        List<QuizReponse> reponses = new ArrayList<>();
+        String sql = "select * from quiz_reponses where quiz_id in (select id from quiz where formation_id = ?) and employe_id = ?;";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1,formation_id);
+        stmt.setInt(2,employe_id);
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            QuizReponse quizReponse = new QuizReponse();
+            quizReponse.setEmploye_id(rs.getInt("employe_id"));
+            quizReponse.setQuiz_id(rs.getInt("quiz_id"));
+            quizReponse.setNum_reponse(rs.getInt("num_reponse"));
+            reponses.add(quizReponse);
+        }
+        return reponses;
     }
 }

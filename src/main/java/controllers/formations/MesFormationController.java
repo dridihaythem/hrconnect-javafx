@@ -1,6 +1,7 @@
 package controllers.formations;
 
 import controllers.formations.quiz.FormationQuiz;
+import controllers.formations.quiz.FormationQuizResult;
 import controllers.formations.quiz.ListeQuizController;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import javafx.fxml.FXML;
@@ -99,9 +100,9 @@ public class MesFormationController implements Initializable, ShowMenu {
                         }
                         Parent root = null;
                         try {
-                            FXMLLoader loader1 = new FXMLLoader(getClass().getResource("/formations/quiz/FormationQuiz.fxml"));
+                            FXMLLoader loader1 = new FXMLLoader(getClass().getResource("/formations/quiz/FormationQuizResult.fxml"));
                             root = loader1.load();
-                            FormationQuiz controller = loader1.getController();
+                            FormationQuizResult controller = loader1.getController();
                             controller.setFormation(formation);
                             vbox.getScene().setRoot(root);
                         } catch (Exception e) {
