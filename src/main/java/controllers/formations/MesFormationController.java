@@ -75,6 +75,26 @@ public class MesFormationController implements Initializable, ShowMenu {
                         place.setText("En ligne");
                     } else {
                         place.setText(formation.getPlace());
+                        place.setOnMouseClicked(event -> {
+                            if(formation.getLat() != null & formation.getLat() != null) {
+                                Parent root = null;
+                                try {
+                                    FXMLLoader loader1 = new FXMLLoader(getClass().getResource("/formations/FormationMap.fxml"));
+                                    root = loader1.load();
+                                    FormationMapController controller = loader1.getController();
+                                    controller.setFormation(formation);
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
+                                vbox.getScene().setRoot(root);
+                            }else{
+                                Alert alert = new Alert(Alert.AlertType.ERROR);
+                                alert.setTitle("Erreur");
+                                alert.setHeaderText("Erreur");
+                                alert.setContentText("Aucune coordonnée GPS n'est disponible pour cette formation");
+                                alert.showAndWait();
+                            }
+                        });
                     }
 
                     Label description = (Label) loader.getNamespace().get("description");

@@ -183,7 +183,7 @@ public class FormationService implements  Crud<Formation> {
 
     public List<Formation> getMesFormation(int employe_id) throws Exception {
 
-        String sql = "SELECT a.id, a.title, a.image, a.is_online, a.description, a.place, a.start_date, a.end_date, b.first_name, b.last_name, EXISTS (SELECT 1 FROM quiz q WHERE q.formation_id = a.id) AS has_quiz FROM formations a JOIN formateurs b ON a.formateur_id = b.id WHERE a.id IN ( SELECT formation_id FROM formation_participation WHERE employe_id = 18 ) ORDER BY a.start_date DESC;";
+        String sql = "SELECT a.id, a.title, a.image, a.is_online, a.description, a.place, a.start_date, a.end_date , a.lat , a.lng, b.first_name, b.last_name, EXISTS (SELECT 1 FROM quiz q WHERE q.formation_id = a.id) AS has_quiz FROM formations a JOIN formateurs b ON a.formateur_id = b.id WHERE a.id IN ( SELECT formation_id FROM formation_participation WHERE employe_id = 18 ) ORDER BY a.start_date DESC;";
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(sql);
         List<Formation> formations = new ArrayList<>();
@@ -201,6 +201,8 @@ public class FormationService implements  Crud<Formation> {
             }else{
                 formation.setEnd_date(null);
             }
+            formation.setLat(rs.getDouble("lat"));
+            formation.setLng(rs.getDouble("lng"));
             Formateur formateur = new Formateur();
             formateur.setFirstName(rs.getString("first_name"));
             formateur.setLastName(rs.getString("last_name"));
