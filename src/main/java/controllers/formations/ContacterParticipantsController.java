@@ -37,6 +37,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -212,24 +218,27 @@ public class ContacterParticipantsController implements Initializable, ShowMenu 
     }
 
 
-    private void GeminiApi(){
+    private void GeminiApi() {
         OkHttpClient client = new OkHttpClient();
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + ConfigReader.get("HAYTHEM_GEMINI_API");
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="
+                + ConfigReader.get("HAYTHEM_GEMINI_API");
 
-        // Creating the JSON body using Map
-        Map<String, Object> messagePart = new HashMap<>();
-        messagePart.put("text", "repondre uniquement avec le text corriger de cette paragphrase : " + message.getText());
+        // Creating the JSON request using Gson
+        Gson gson = new Gson();
 
-        Map<String, Object> contentPart = new HashMap<>();
-        contentPart.put("parts", new Object[]{messagePart});
+        // Constructing the request body
+        JsonObject messagePart = new JsonObject();
+        messagePart.addProperty("text", "repondre uniquement avec le text corriger de cette paragphrase : " + message.getText());
 
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("contents", new Object[]{contentPart});
+        JsonObject contentPart = new JsonObject();
+        contentPart.add("parts", gson.toJsonTree(Collections.singletonList(messagePart)));
+
+        JsonObject requestBody = new JsonObject();
+        requestBody.add("contents", gson.toJsonTree(Collections.singletonList(contentPart)));
 
         try {
-            // Convert Map to JSON string
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jsonPayload = objectMapper.writeValueAsString(requestBody);
+            // Convert request body to JSON string
+            String jsonPayload = gson.toJson(requestBody);
 
             // Create request body
             RequestBody body = RequestBody.create(jsonPayload, MediaType.get("application/json; charset=utf-8"));
@@ -245,16 +254,20 @@ public class ContacterParticipantsController implements Initializable, ShowMenu 
                 if (response.isSuccessful() && response.body() != null) {
                     // Parse JSON response
                     String responseBody = response.body().string();
-                    JsonNode rootNode = objectMapper.readTree(responseBody);
+                    JsonElement rootNode = JsonParser.parseString(responseBody);
 
                     // Extract the corrected text
-                    String correctedText = rootNode.path("candidates")
+                    JsonObject firstCandidate = rootNode.getAsJsonObject()
+                            .getAsJsonArray("candidates")
                             .get(0)
-                            .path("content")
-                            .path("parts")
+                            .getAsJsonObject();
+
+                    JsonObject content = firstCandidate.getAsJsonObject("content");
+                    String correctedText = content.getAsJsonArray("parts")
                             .get(0)
-                            .path("text")
-                            .asText();
+                            .getAsJsonObject()
+                            .get("text")
+                            .getAsString();
 
                     message.setText(correctedText);
                 } else {
@@ -265,6 +278,7 @@ public class ContacterParticipantsController implements Initializable, ShowMenu 
             e.printStackTrace();
         }
     }
+
     private void envoyerEmail(String email){
         OkHttpClient client = new OkHttpClient();
         String url = "https://api.emailjs.com/api/v1.0/email/send";
