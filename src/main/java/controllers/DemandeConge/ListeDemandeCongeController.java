@@ -10,8 +10,12 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import models.Demande_Conge;
 import models.Employe;
+import models.StatutDemande;
 import services.DemandeCongeService;
 import services.EmployeService;
 import utils.ShowMenu;
@@ -107,7 +111,20 @@ public class ListeDemandeCongeController implements Initializable, ShowMenu {
                 row.addCell(new TableCell(demande.getTypeConge().name(), 120));
                 row.addCell(new TableCell(demande.getDateDebut().toString(), 120));
                 row.addCell(new TableCell(demande.getDateFin().toString(), 120));
-                row.addCell(new TableCell(demande.getStatut().name(), 120));
+
+                // Utilisation de la nouvelle méthode pour afficher le statut avec un cercle coloré et le texte
+                HBox statusCell = new TableCell("", 120).buildWithStatusCircleAndText(demande.getStatut());
+                row.addCell(new TableCell("", 120) {
+                    @Override
+                    public Label build() {
+                        Label label = new Label();
+                        label.setGraphic(statusCell); // Ajouter le HBox comme graphique du label
+                        label.setMinWidth(minWidth);
+                        label.setMaxWidth(minWidth);
+                        return label;
+                    }
+                });
+
                 row.addCell(new TableCell(demande.getValidationCommentaire(), 200));
                 row.addCell(new TableCell(String.valueOf(employe.getSoldeConges()), 120));
                 row.addCell(new TableCell(String.valueOf(remainingLeaves), 120));
@@ -150,7 +167,6 @@ public class ListeDemandeCongeController implements Initializable, ShowMenu {
             }
         }
     }
-
     private void reloadPage() {
         Parent root = null;
         try {

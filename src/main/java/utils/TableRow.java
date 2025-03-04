@@ -25,19 +25,19 @@ public class TableRow {
         cells.add(row);
     }
 
-    public  HBox build(){
+    public HBox build() {
         HBox hBox = new HBox();
         hBox.getStyleClass().add(type == TableRowType.HEADER ? "table-header" : "table-body");
         for (TableCell cell : cells) {
             Label lb = cell.build();
-            if(type == TableRowType.HEADER) {
+            if (type == TableRowType.HEADER) {
                 lb.getStyleClass().add("table-header-label");
-            }else{
+            } else {
                 lb.getStyleClass().add("table-body-label");
             }
             hBox.getChildren().add(lb);
         }
-        if(type == TableRowType.BODY) {
+        if (type == TableRowType.BODY) {
             actions.forEach(action -> {
                 hBox.getChildren().add(action);
             });
@@ -45,7 +45,7 @@ public class TableRow {
         return hBox;
     }
 
-    public void addAction(String iconName,String classe,Runnable action){
+    public void addAction(String iconName, String classe, Runnable action) {
         HBox container = new HBox();
         container.getStyleClass().add(classe);
 
@@ -60,5 +60,4 @@ public class TableRow {
         container.getChildren().add(icon);
         actions.add(container);
     }
-
 }
