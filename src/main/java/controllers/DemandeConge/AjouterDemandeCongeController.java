@@ -16,7 +16,6 @@ import models.Demande_Conge;
 import models.Employe;
 import models.TypeConge;
 import services.DemandeCongeService;
-import javax.mail.internet.InternetAddress;
 import services.EmployeService;
 import utils.ShowMenu;
 
@@ -122,6 +121,7 @@ public class AjouterDemandeCongeController implements ShowMenu, Initializable {
         }
 
     }
+
     private void sendEmail(Demande_Conge demande) {
         try {
             // Configuration du serveur SMTP (exemple avec Gmail)
@@ -133,7 +133,7 @@ public class AjouterDemandeCongeController implements ShowMenu, Initializable {
             // Création de l'email
             Email email = EmailBuilder.startingBlank()
                     .from("chikenbrain26@gmail.com")
-                   .to("chikenbrain26@gmail.com") // Adresse email du destinataire
+                    .to("chikenbrain26@gmail.com") // Adresse email du destinataire
                     .withSubject("Nouvelle Demande de Congé")
                     .withPlainText("Bonjour,\n\n" +
                             "Une nouvelle demande de congé a été enregistrée avec succès.\n" +
