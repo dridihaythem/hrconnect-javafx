@@ -4,6 +4,9 @@ import java.sql.Timestamp;
 
 public class Absence {
 
+
+
+
     public enum Motif {
         MALADIE, CONGE, AUTRE
     }

@@ -1,5 +1,7 @@
 package controllers;
 
+
+
 import exceptions.InvalidInputException;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.controls.MFXComboBox;
@@ -101,7 +103,7 @@ public class MenuController {
     void redirectToGestionAbsence() {
         Parent root = null;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ListeAbsence.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/Absence/ListeAbsence.fxml"));
             root = loader.load();
         } catch (Exception e) {
             throw new RuntimeException(e);
