@@ -20,6 +20,7 @@ import models.OffreEmploi;
 import services.CandidatService;
 import services.CandidatureService;
 import services.OffreEmploiService;
+import utils.ConfigReader;
 import utils.ShowMenu;
 
 import java.io.File;
@@ -65,8 +66,8 @@ public class FormulaireCandidatureController implements ShowMenu {
     private Candidature candidature;
 
     // Identifiants Twilio
-    public static final String ACCOUNT_SID = "AC9189c8672031a0781f3124471b50b0fc";
-    public static final String AUTH_TOKEN = "b48efd6ef629353f79e2223606c1ba6c";
+    public static final String ACCOUNT_SID = ConfigReader.get("AMINE_TWILIO_SID");;
+    public static final String AUTH_TOKEN = ConfigReader.get("AMINE_TWILIO_AUTH");;
 
     public void initialize() {
         // Initialiser le menu
