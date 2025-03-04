@@ -1,5 +1,9 @@
 package controllers.formations.quiz;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import io.github.palexdev.materialfx.controls.MFXButton;
@@ -20,9 +24,11 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import models.Formation;
 import models.Quiz;
 import models.QuizReponse;
+import okhttp3.*;
 import services.FormationService;
 import services.QuizService;
 import utils.ConfigReader;
@@ -44,10 +50,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class FormationQuizResult implements Initializable, ShowMenu {
 
@@ -76,7 +79,7 @@ public class FormationQuizResult implements Initializable, ShowMenu {
                 List<QuizReponse> reponses = qs.getUserReponses(formation.getId(),18);
 
                 if(currentQuizIndex == quizzes.size()){
-                    Label label = new Label("Vous avez terminé le quiz");
+                    Label label = new Label("Merci !");
                     label.setFont(new Font(20));
                     vbox.getChildren().add(label);
 
@@ -104,36 +107,35 @@ public class FormationQuizResult implements Initializable, ShowMenu {
                     vbox.getChildren().add(reponse3);
 
 
-                  /*  if(quiz.getNumRepCorrect() == 1){
+                    String correctRep;
+
+                    if(quiz.getNumRepCorrect() == 1){
                         reponse1.setStyle("-fx-background-color: green;");
+                        correctRep = quiz.getReponse1();
                     }else if(quiz.getNumRepCorrect() == 2) {
                         reponse1.setStyle("-fx-background-color: green;");
+                        correctRep = quiz.getReponse2();
                     }else{
                         reponse1.setStyle("-fx-background-color: green;");
-                    }*/
+                        correctRep = quiz.getReponse3();
+                    }
 
                     // cocher les reponses du l'utilisateur
                     if (reponses.stream().anyMatch(r -> r.getQuiz_id() == quiz.getId())) {
                         QuizReponse reponse = reponses.stream().filter(r -> r.getQuiz_id() == quiz.getId()).findFirst().get();
                         if (reponse.getNum_reponse() == 1) {
                             reponse1.setSelected(true);
-                            if (quiz.getNumRepCorrect() != 1) {
-                                reponse1.setStyle("-fx-background-color: red !important;");
-                            }
                         } else if (reponse.getNum_reponse() == 2) {
                             reponse2.setSelected(true);
-                            if (quiz.getNumRepCorrect() != 2) {
-                                reponse2.setStyle("-fx-background-color: red !important;");
-                            }
-                        } else {
+                        } else if(reponse.getNum_reponse() == 3) {
                             reponse3.setSelected(true);
-                            if (quiz.getNumRepCorrect() != 3) {
-                                reponse3.setStyle("-fx-background-color: red; !important;");
-                            }
                         }
                     }
 
 
+                    Text text = new Text(GeminiApi(quiz.getQuestion(),correctRep));
+                    text.setWrappingWidth(400);
+                    vbox.getChildren().add(text);
 
 
                     MFXButton next = new MFXButton("Suivant");
@@ -160,5 +162,68 @@ public class FormationQuizResult implements Initializable, ShowMenu {
     public void setFormation(Formation formation) throws SQLException {
         this.formation = formation;
         initialize(null,null);
+    }
+
+    private String GeminiApi(String quizTitle,String reponse) {
+        OkHttpClient client = new OkHttpClient();
+        String url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key="
+                + ConfigReader.get("HAYTHEM_GEMINI_API");
+
+        // Creating the JSON request using Gson
+        Gson gson = new Gson();
+
+        // Constructing the request body
+        JsonObject messagePart = new JsonObject();
+        messagePart.addProperty("text", "Expliquer la question suivtante  : " + quizTitle + " et pour quoi la reponse correcte est "  + reponse + " repondre en 3 ou 4 lignes");
+
+        JsonObject contentPart = new JsonObject();
+        contentPart.add("parts", gson.toJsonTree(Collections.singletonList(messagePart)));
+
+        JsonObject requestBody = new JsonObject();
+        requestBody.add("contents", gson.toJsonTree(Collections.singletonList(contentPart)));
+
+        try {
+            // Convert request body to JSON string
+            String jsonPayload = gson.toJson(requestBody);
+
+            // Create request body
+            RequestBody body = RequestBody.create(jsonPayload, MediaType.get("application/json; charset=utf-8"));
+
+            // Build request
+            Request request = new Request.Builder()
+                    .url(url)
+                    .post(body)
+                    .build();
+
+            // Execute request
+            try (Response response = client.newCall(request).execute()) {
+                if (response.isSuccessful() && response.body() != null) {
+                    // Parse JSON response
+                    String responseBody = response.body().string();
+                    JsonElement rootNode = JsonParser.parseString(responseBody);
+
+                    // Extract the corrected text
+                    JsonObject firstCandidate = rootNode.getAsJsonObject()
+                            .getAsJsonArray("candidates")
+                            .get(0)
+                            .getAsJsonObject();
+
+                    JsonObject content = firstCandidate.getAsJsonObject("content");
+                    String correctedText = content.getAsJsonArray("parts")
+                            .get(0)
+                            .getAsJsonObject()
+                            .get("text")
+                            .getAsString();
+
+                   return correctedText;
+                } else {
+                    System.out.println("Request failed: " + response.code());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "";
     }
 }

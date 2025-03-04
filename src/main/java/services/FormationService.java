@@ -211,6 +211,19 @@ public class FormationService implements  Crud<Formation> {
         return formations;
     }
 
+    public boolean userAnsweredTheQuiz(int employe_id,int formation_id) throws SQLException{
+        String sql = "select count(*) as count from quiz_reponses\n" +
+                "WHERE quiz_id in (SELECT id FROM quiz where formation_id = ?)\n" +
+                "and employe_id = ?";
+
+        PreparedStatement  stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, formation_id);
+        stmt.setInt(2, employe_id);
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
+        return rs.getInt("count") > 0;
+    }
+
     public List<Employe> getFormationParticipants(int formation_id) throws SQLException {
         String sql = "SELECT * FROM employe WHERE id IN (SELECT employe_id FROM formation_participation WHERE formation_id = ?) ORDER BY id DESC";
         PreparedStatement  stmt = conn.prepareStatement(sql);

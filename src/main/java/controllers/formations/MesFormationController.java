@@ -21,6 +21,7 @@ import utils.ShowMenu;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -70,9 +71,9 @@ public class MesFormationController implements Initializable, ShowMenu {
                     title.setText(formation.getTitle());
 
                     Label place = (Label) loader.getNamespace().get("place");
-                    if(formation.isIs_online()){
+                    if (formation.isIs_online()) {
                         place.setText("En ligne");
-                    }else {
+                    } else {
                         place.setText(formation.getPlace());
                     }
 
@@ -88,32 +89,62 @@ public class MesFormationController implements Initializable, ShowMenu {
 
                     MFXButton inscrireButton = (MFXButton) loader.getNamespace().get("inscrireBtn");
 
-                    inscrireButton.setText("Passer le quiz");
-                    inscrireButton.setOnAction(event -> {
-                        if(!formation.isHas_quiz()){
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                            alert.setTitle("Information Dialog");
-                            alert.setHeaderText(null);
-                            alert.setContentText("Cette formation n'a pas de quiz");
-                            alert.showAndWait();
-                            return;
-                        }
-                        Parent root = null;
-                        try {
-                            FXMLLoader loader1 = new FXMLLoader(getClass().getResource("/formations/quiz/FormationQuizResult.fxml"));
-                            root = loader1.load();
-                            FormationQuizResult controller = loader1.getController();
-                            controller.setFormation(formation);
-                            vbox.getScene().setRoot(root);
-                        } catch (Exception e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
+                    if(!formation.isHas_quiz()){
+                        inscrireButton.setVisible(false);
+                    }
 
+                    if(formation.isHas_quiz() && !fs.userAnsweredTheQuiz(18,formation.getId()) ){
+                        inscrireButton.setText("Passer le quiz");
+                        inscrireButton.setOnAction(event -> {
+                            if (!formation.isHas_quiz()) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Information Dialog");
+                                alert.setHeaderText(null);
+                                alert.setContentText("Cette formation n'a pas de quiz");
+                                alert.showAndWait();
+                                return;
+                            }
+                            Parent root = null;
+                            try {
+                                FXMLLoader loader1 = new FXMLLoader(getClass().getResource("/formations/quiz/FormationQuiz.fxml"));
+                                root = loader1.load();
+                                FormationQuiz controller = loader1.getController();
+                                controller.setFormation(formation);
+                                vbox.getScene().setRoot(root);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                    }
+                    if(fs.userAnsweredTheQuiz(18,formation.getId()) ){
+                        inscrireButton.setText("Resultat du quiz");
+                        inscrireButton.setOnAction(event -> {
+                            if (!formation.isHas_quiz()) {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Information Dialog");
+                                alert.setHeaderText(null);
+                                alert.setContentText("Cette formation n'a pas de quiz");
+                                alert.showAndWait();
+                                return;
+                            }
+                            Parent root = null;
+                            try {
+                                FXMLLoader loader1 = new FXMLLoader(getClass().getResource("/formations/quiz/FormationQuizResult.fxml"));
+                                root = loader1.load();
+                                FormationQuizResult controller = loader1.getController();
+                                controller.setFormation(formation);
+                                vbox.getScene().setRoot(root);
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                        });
+                    }
 
                     vbox.getChildren().add(xmlContent);
                 } catch (IOException e) {
                     e.printStackTrace();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
 
             }
