@@ -15,6 +15,7 @@ import models.Demande_Conge;
 import models.StatutDemande;
 import models.Valider_Conge;
 import services.ValiderCongeService;
+import utils.ConfigReader;
 import utils.ShowMenu;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
@@ -61,8 +62,8 @@ public class ModifierValiderCongeController implements Initializable, ShowMenu {
             validerCongeService.createValidation(validation);
 
             // Envoyer un SMS via Twilio
-            String ACCOUNT_SID = "ACae4dda35cf8cf40fe5f26ea3f45e96bd";
-            String AUTH_TOKEN = "cc334bae82cce252a2ca0d9a6c872bec";
+            String ACCOUNT_SID = ConfigReader.get("ALA_TWILIO_SID");
+            String AUTH_TOKEN = ConfigReader.get("ALA_TWILIO_AUTH");
 
             Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
 
