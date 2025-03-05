@@ -4,6 +4,9 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import io.github.palexdev.materialfx.controls.MFXButton;
 import io.github.palexdev.materialfx.utils.SwingFXUtils;
+import jakarta.activation.DataHandler;
+import jakarta.mail.*;
+import jakarta.mail.internet.*;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,15 +31,10 @@ import utils.ConfigReader;
 import utils.ShowMenu;
 import utils.enums.QuizType;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.activation.FileDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.activation.FileDataSource;
 import javax.imageio.ImageIO;
-import javax.mail.*;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -101,7 +99,6 @@ public class FormationQuiz implements Initializable, ShowMenu {
 
                     if(passed) {
                         scoreLabel.setStyle("-fx-text-fill: green");
-                        generateAttestation();
                     }else{
                         scoreLabel.setStyle("-fx-text-fill: red");
                     }
@@ -109,6 +106,10 @@ public class FormationQuiz implements Initializable, ShowMenu {
                     vbox.getChildren().add(scoreLabel);
 
                     vbox.setAlignment(javafx.geometry.Pos.CENTER);
+
+                    if(passed){
+                        generateAttestation();
+                    }
 
 
                 }else{

@@ -37,12 +37,7 @@
             <version>2.1.0</version>
         </dependency>
 
-        <!-- Jakarta Mail Implementation -->
-        <dependency>
-            <groupId>com.sun.mail</groupId>
-            <artifactId>jakarta.mail</artifactId>
-            <version>2.0.1</version>
-        </dependency>
+
 
         <!-- Simple Java Mail -->
         <dependency>
@@ -166,6 +161,13 @@
             <artifactId>activation</artifactId>
             <version>1.1.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>jakarta.activation</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+
 
         <!-- Stripe Java SDK -->
         <dependency>

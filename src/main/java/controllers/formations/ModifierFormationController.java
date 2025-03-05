@@ -23,6 +23,7 @@ import services.FormationService;
 import utils.GoogleMap;
 import utils.PlaceInfo;
 import utils.ShowMenu;
+import utils.UploadImage;
 
 import java.io.File;
 import java.net.URL;
@@ -117,7 +118,14 @@ public class ModifierFormationController implements Initializable, ShowMenu {
                 throw new InvalidInputException("Le prix doit être supérieur ou égale à 0");
             }
 
-            formation.setImage(imagePath);
+            System.out.println(imagePath);
+            if(imagePath.contains("http")) {
+                formation.setImage(imagePath);
+            }else{
+                UploadImage uploadImage = new UploadImage();
+                String imageUrl = uploadImage.uploadImage(new File(imagePath));
+                formation.setImage(imageUrl);
+            }
             formation.setTitle(title.getText());
             formation.setDescription(description.getText());
             formation.setFormateur_id(formateur.getValue().getId());
@@ -310,7 +318,7 @@ public class ModifierFormationController implements Initializable, ShowMenu {
 
         imagePath = formation.getImage();
         if(imagePath != null){
-            imageView.setImage(new javafx.scene.image.Image(new File(imagePath).toURI().toString()));
+            imageView.setImage(new javafx.scene.image.Image(imagePath));
         }
 
         price.setText(formation.getPrice().toString());
