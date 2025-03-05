@@ -27,6 +27,7 @@ import services.FormationService;
 import utils.GoogleMap;
 import utils.PlaceInfo;
 import utils.ShowMenu;
+import utils.UploadImage;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -125,9 +126,13 @@ public class AjouterFormationController implements ShowMenu, Initializable {
             }
 
 
+            UploadImage uploadImage = new UploadImage();
+            String imageUrl = uploadImage.uploadImage(new File(imagePath));
+
+
             Formation formation = new Formation(
                     formateur.getValue().getId(),
-                   imagePath,
+                    imageUrl,
                     title.getText(),
                     description.getText(),
                     emplacement.getText(),
