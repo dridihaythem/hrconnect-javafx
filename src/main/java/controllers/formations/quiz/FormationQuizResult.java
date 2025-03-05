@@ -113,10 +113,10 @@ public class FormationQuizResult implements Initializable, ShowMenu {
                         reponse1.setStyle("-fx-background-color: green;");
                         correctRep = quiz.getReponse1();
                     }else if(quiz.getNumRepCorrect() == 2) {
-                        reponse1.setStyle("-fx-background-color: green;");
+                        reponse2.setStyle("-fx-background-color: green;");
                         correctRep = quiz.getReponse2();
                     }else{
-                        reponse1.setStyle("-fx-background-color: green;");
+                        reponse3.setStyle("-fx-background-color: green;");
                         correctRep = quiz.getReponse3();
                     }
 
